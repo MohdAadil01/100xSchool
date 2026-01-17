@@ -13,7 +13,7 @@ export class ApiResponse<T = any> {
     return new ApiResponse<T>(true, data, null);
   }
 
-  static error(errorCode: string) {
-    return new ApiResponse<null>(false, null, errorCode);
+  static error(error: string) {
+    return new ApiResponse<null>(false, null, error);
   }
 }

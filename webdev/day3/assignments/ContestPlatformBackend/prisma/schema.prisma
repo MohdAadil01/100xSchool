@@ -1,0 +1,163 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  createdAt DateTime @default(now())
+
+  contests       Contest[]
+  mcqSubmissions McqSubmission[]
+  dsaSubmissions DsaSubmission[]
+}
+
+model Contest {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+
+  creatorId Int
+  creator   User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  startTime DateTime @default(now())
+  endTime   DateTime
+  createdAt DateTime @default(now())
+
+  mcqQuestions McqQuestion[]
+  dsaQuestions DsaQuestion[]
+
+  @@index([creatorId])
+}
+
+model McqQuestion {
+  id Int @id @default(autoincrement())
+
+  contestId Int
+  contest   Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+
+  questionText       String
+  options            Json
+  correctOptionIndex Int
+  points             Int    @default(1)
+
+  createdAt DateTime @default(now())
+
+  submissions McqSubmission[]
+
+  @@index([contestId])
+}
+
+model DsaQuestion {
+  id Int @id @default(autoincrement())
+
+  contestId Int
+  contest   Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String
+  tags        Json
+
+  points      Int @default(100)
+  timeLimit   Int @default(2000)
+  memoryLimit Int @default(256)
+
+  createdAt DateTime @default(now())
+
+  testCases   TestCase[]
+  submissions DsaSubmission[]
+
+  @@index([contestId])
+}
+
+model TestCase {
+  id Int @id @default(autoincrement())
+
+  problemId Int
+  problem   DsaQuestion @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  input          String
+  expectedOutput String
+  isHidden       Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([problemId])
+}
+
+model McqSubmission {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  questionId Int
+  question   McqQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  selectedOptionIndex Int
+  isCorrect           Boolean
+  pointsEarned        Int     @default(0)
+
+  submittedAt DateTime @default(now())
+
+  @@unique([userId, questionId])
+  @@index([userId])
+  @@index([questionId])
+}
+
+model DsaSubmission {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  problemId Int
+  problem   DsaQuestion @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  code     String
+  language String
+
+  status SubmissionStatus
+
+  testCasesPassed Int @default(0)
+  totalTestCases  Int @default(0)
+
+  executionTime Int
+  pointsEarned  Int @default(0)
+
+  submittedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([problemId])
+  @@index([status])
+}
+
+enum Role {
+  creator
+  contestee
+}
+
+enum SubmissionStatus {
+  PENDING
+  RUNNING
+  ACCEPTED
+  WRONG_ANSWER
+  TIME_LIMIT_EXCEEDED
+  MEMORY_LIMIT_EXCEEDED
+  RUNTIME_ERROR
+  COMPILATION_ERROR
+}

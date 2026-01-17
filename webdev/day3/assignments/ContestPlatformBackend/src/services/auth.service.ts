@@ -1,6 +1,7 @@
 import { prisma } from "../lib/primsa";
 import { AppError } from "../utils/AppError";
 import bcrypt from "bcrypt";
+import { generateJwtToken } from "../utils/jwt";
 
 export const signupService = async (data: {
   name: string;
@@ -41,4 +42,27 @@ export const signupService = async (data: {
   });
 
   return user;
+};
+
+export const loginService = async (data: {
+  email: string;
+  password: string;
+}) => {
+  const { email, password: inputPassword } = data;
+  const user = await prisma.user.findFirst({
+    where: {
+      email,
+    },
+  });
+  if (!user) throw new AppError("User not found", 404);
+
+  const isAuthenticated = await bcrypt.compare(inputPassword, user.password);
+
+  if (!isAuthenticated) throw new AppError("Unauthenticated", 409);
+
+  const token = generateJwtToken({ email: user.email, role: user.email });
+
+  const { password, ...userWithoutPassword } = user;
+
+  return { userWithoutPassword, token };
 };

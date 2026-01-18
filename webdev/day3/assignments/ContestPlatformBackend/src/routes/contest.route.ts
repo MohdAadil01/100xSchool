@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { getContest } from "../controllers/contest.controller";
+import { createContest } from "../controllers/contest.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 
 const contestRoute = Router();
 
-contestRoute.get("/", authMiddleware, getContest);
+contestRoute.post("/", authMiddleware, createContest);
 
 export default contestRoute;

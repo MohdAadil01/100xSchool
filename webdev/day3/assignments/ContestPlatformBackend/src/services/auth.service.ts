@@ -60,7 +60,11 @@ export const loginService = async (data: {
 
   if (!isAuthenticated) throw new AppError("Unauthenticated", 409);
 
-  const token = generateJwtToken({ email: user.email, role: user.email });
+  const token = generateJwtToken({
+    id: user.id,
+    email: user.email,
+    role: user.email,
+  });
 
   const { password, ...userWithoutPassword } = user;
 

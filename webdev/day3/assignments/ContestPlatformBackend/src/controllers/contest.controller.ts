@@ -8,7 +8,11 @@ export const createContest = asyncHandler(
   async (req: Request, res: Response) => {
     const parsedBody = createContestSchema.parse(req.body);
 
-    const contest = await createContestService(parsedBody, req.user?.id!);
+    const contest = await createContestService(
+      parsedBody,
+      req.user?.id!,
+      req.user?.email!,
+    );
 
     return res.status(201).json(ApiResponse.success(contest));
   },

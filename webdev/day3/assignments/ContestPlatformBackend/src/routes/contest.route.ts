@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  addDsaQuestion,
   addMcqToContest,
   createContest,
   getContestById,
@@ -18,4 +19,6 @@ contestRoute.post(
   authMiddleware,
   submitMcqQuestion,
 );
+
+contestRoute.post("/:contestId/dsa", authMiddleware, addDsaQuestion);
 export default contestRoute;

@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import asyncHandler from "../utils/asyncHandler";
 import {
+  addDsaQuestionInputSchema,
   addMcqToContestSchema,
   createContestSchema,
   submitMcqQuestionSchema,
 } from "../validation/contest.validation";
 import {
+  addDsaQuestionService,
   addMcqToContestService,
   createContestService,
   getContestByIdService,
@@ -62,6 +64,21 @@ export const submitMcqQuestion = asyncHandler(
       req.user?.id!,
       Number(contestId),
       Number(questionId),
+    );
+
+    return res.status(201).json(ApiResponse.success(data));
+  },
+);
+
+export const addDsaQuestion = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { contestId } = req.params;
+    const parsedBody = addDsaQuestionInputSchema.parse(req.body);
+    const data = await addDsaQuestionService(
+      parsedBody,
+      req.user?.role!,
+      req.user?.id!,
+      Number(contestId),
     );
 
     return res.status(201).json(ApiResponse.success(data));

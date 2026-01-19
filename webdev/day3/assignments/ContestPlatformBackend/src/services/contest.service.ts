@@ -4,13 +4,17 @@ import {
   AddMcqToContestInputType,
   addMcqToContestSchema,
   CreateContestInputType,
+  SubmitMcqQuestionType,
 } from "../validation/contest.validation";
 
 export const createContestService = async (
   data: CreateContestInputType,
   creatorId: number,
   email: string,
+  role: string,
 ) => {
+  if (role.toLowerCase() != "creator") throw new AppError("FORBIDDEN", 403);
+
   const creator = await prisma.user.findFirst({
     where: {
       id: creatorId,
@@ -96,7 +100,9 @@ export const addMcqToContestService = async (
   data: AddMcqToContestInputType,
   contestId: number,
   creatorId: number,
+  role: string,
 ) => {
+  if (role.toLowerCase() != "creator") throw new AppError("FORBIDDEN", 403);
   if (!contestId) throw new AppError("Contest Id not given", 400);
   const { questionText, options, correctOptionIndex, points } = data;
 
@@ -136,4 +142,74 @@ export const addMcqToContestService = async (
     },
   });
   return question;
+};
+
+export const submitMcqQuestionService = async (
+  data: SubmitMcqQuestionType,
+  role: string,
+  contesteeId: number,
+  contestId: number,
+  questionId: number,
+) => {
+  if (role.toLowerCase() != "contestee")
+    throw new AppError("UNAUTHORIZED", 401);
+
+  const contest = await prisma.contest.findFirst({
+    where: {
+      id: contestId,
+    },
+  });
+
+  const now = new Date();
+  if (!contest) throw new AppError("Contest not found", 404);
+  if (contest.startTime <= now || contest.endTime >= now)
+    throw new AppError("CONTEST_NOT_ACTIVE", 400);
+
+  const question = await prisma.mcqQuestion.findFirst({
+    where: {
+      id: questionId,
+    },
+  });
+  if (!question) throw new AppError("Question not found", 404);
+
+  if (contest.creatorId == contesteeId) throw new AppError("FORBIDDEN", 403);
+
+  const options = question.options as string[];
+  if (
+    data.selectedOptionIndex < 0 ||
+    data.selectedOptionIndex >= options.length
+  ) {
+    throw new AppError("INVALID_OPTION_INDEX", 400);
+  }
+
+  const existingSubmission = await prisma.mcqSubmission.findUnique({
+    where: {
+      userId_questionId: {
+        userId: contesteeId,
+        questionId,
+      },
+    },
+  });
+  if (existingSubmission) throw new AppError("QUESTION_ALREADY_SUBMITTED", 409);
+
+  const isCorrect = question.correctOptionIndex == data.selectedOptionIndex;
+
+  const submission = await prisma.mcqSubmission.create({
+    data: {
+      userId: contesteeId,
+      questionId,
+      selectedOptionIndex: data.selectedOptionIndex,
+      isCorrect,
+      pointsEarned: isCorrect ? question.points : 0,
+    },
+    select: {
+      id: true,
+      selectedOptionIndex: true,
+      isCorrect: true,
+      pointsEarned: true,
+      submittedAt: true,
+    },
+  });
+
+  return submission;
 };

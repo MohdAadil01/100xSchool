@@ -1,0 +1,7 @@
+# Ignore any folder named "resources" anywhere in repo
+**/resources/
+# Node
+**/node_modules/
+.env
+dist/
+build/

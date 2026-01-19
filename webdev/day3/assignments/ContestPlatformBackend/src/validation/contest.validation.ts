@@ -33,3 +33,12 @@ export const addMcqToContestSchema = z
   );
 
 export type AddMcqToContestInputType = z.infer<typeof addMcqToContestSchema>;
+
+export const submitMcqQuestionSchema = z.object({
+  selectedOptionIndex: z
+    .number()
+    .int("INVALID_OPTION_INDEX")
+    .nonnegative("INVALID_OPTION_INDEX"),
+});
+
+export type SubmitMcqQuestionType = z.infer<typeof submitMcqQuestionSchema>;

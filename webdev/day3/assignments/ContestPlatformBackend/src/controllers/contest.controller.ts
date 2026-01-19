@@ -3,11 +3,13 @@ import asyncHandler from "../utils/asyncHandler";
 import {
   addMcqToContestSchema,
   createContestSchema,
+  submitMcqQuestionSchema,
 } from "../validation/contest.validation";
 import {
   addMcqToContestService,
   createContestService,
   getContestByIdService,
+  submitMcqQuestionService,
 } from "../services/contest.service";
 import { ApiResponse } from "../utils/ApiResponse";
 
@@ -19,6 +21,7 @@ export const createContest = asyncHandler(
       parsedBody,
       req.user?.id!,
       req.user?.email!,
+      req.user?.role!,
     );
 
     return res.status(201).json(ApiResponse.success(contest));
@@ -42,6 +45,23 @@ export const addMcqToContest = asyncHandler(
       parsedBody,
       Number(contestId),
       req.user?.id!,
+      req.user?.role!,
+    );
+
+    return res.status(201).json(ApiResponse.success(data));
+  },
+);
+
+export const submitMcqQuestion = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { contestId, questionId } = req.params;
+    const parsedBody = submitMcqQuestionSchema.parse(req.body);
+    const data = await submitMcqQuestionService(
+      parsedBody,
+      req.user?.role!,
+      req.user?.id!,
+      Number(contestId),
+      Number(questionId),
     );
 
     return res.status(201).json(ApiResponse.success(data));

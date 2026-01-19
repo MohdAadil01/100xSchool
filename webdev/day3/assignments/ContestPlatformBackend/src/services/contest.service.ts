@@ -154,27 +154,30 @@ export const submitMcqQuestionService = async (
   if (role.toLowerCase() != "contestee")
     throw new AppError("UNAUTHORIZED", 401);
 
-  const contest = await prisma.contest.findFirst({
+  const contest = await prisma.contest.findUnique({
     where: {
       id: contestId,
     },
   });
 
-  const now = new Date();
   if (!contest) throw new AppError("Contest not found", 404);
-  if (contest.startTime <= now || contest.endTime >= now)
+  const now = new Date();
+  if (contest.startTime > now || contest.endTime < now)
     throw new AppError("CONTEST_NOT_ACTIVE", 400);
+
+  if (contest.creatorId == contesteeId) throw new AppError("FORBIDDEN", 403);
 
   const question = await prisma.mcqQuestion.findFirst({
     where: {
       id: questionId,
+      contestId,
     },
   });
+
   if (!question) throw new AppError("Question not found", 404);
 
-  if (contest.creatorId == contesteeId) throw new AppError("FORBIDDEN", 403);
-
   const options = question.options as string[];
+
   if (
     data.selectedOptionIndex < 0 ||
     data.selectedOptionIndex >= options.length

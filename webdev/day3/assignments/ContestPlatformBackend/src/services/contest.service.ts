@@ -1,8 +1,9 @@
 import { prisma } from "../lib/primsa";
 import { AppError } from "../utils/AppError";
+import { normalizeInputTestCases } from "../utils/normalize";
 import {
+  AddDsaQuestionInputType,
   AddMcqToContestInputType,
-  addMcqToContestSchema,
   CreateContestInputType,
   SubmitMcqQuestionType,
 } from "../validation/contest.validation";
@@ -215,4 +216,82 @@ export const submitMcqQuestionService = async (
   });
 
   return submission;
+};
+
+export const addDsaQuestionService = async (
+  data: AddDsaQuestionInputType,
+  role: string,
+  creatorId: number,
+  contestId: number,
+) => {
+  const {
+    title,
+    description,
+    tags,
+    points,
+    timeLimit,
+    memoryLimit,
+    testCases,
+  } = data;
+  if (role.toLowerCase() != "creator") throw new AppError("FORBIDDEN", 403);
+  const contest = await prisma.contest.findFirst({
+    where: {
+      id: contestId,
+    },
+  });
+  if (!contest) throw new AppError("Contest not found.", 404);
+
+  if (contest.creatorId != creatorId) throw new AppError("FORBIDDEN", 401);
+
+  const now = new Date();
+  if (now >= contest.startTime) throw new AppError("Contest is Active", 400);
+
+  const existingQuestion = await prisma.dsaQuestion.findFirst({
+    where: {
+      title,
+      description,
+      contestId,
+    },
+  });
+  if (existingQuestion)
+    throw new AppError("Question alreay present in the contest", 400);
+
+  const normalizedTestCases = testCases.map((tc) => ({
+    input: normalizeInputTestCases(tc.input),
+    expectedOutput: normalizeInputTestCases(tc.expectedOutput),
+    isHidden: tc.isHidden,
+  }));
+
+  const question = await prisma.dsaQuestion.create({
+    data: {
+      contestId,
+      title,
+      description,
+      tags,
+      points,
+      timeLimit,
+      memoryLimit,
+      testCases: {
+        create: normalizedTestCases,
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      tags: true,
+      points: true,
+      timeLimit: true,
+      memoryLimit: true,
+      createdAt: true,
+      testCases: {
+        select: {
+          id: true,
+          isHidden: true,
+        },
+      },
+    },
+  });
+
+  return question;
 };

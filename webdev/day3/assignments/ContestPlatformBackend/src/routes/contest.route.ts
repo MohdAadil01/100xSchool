@@ -21,4 +21,5 @@ contestRoute.post(
 );
 
 contestRoute.post("/:contestId/dsa", authMiddleware, addDsaQuestion);
+
 export default contestRoute;

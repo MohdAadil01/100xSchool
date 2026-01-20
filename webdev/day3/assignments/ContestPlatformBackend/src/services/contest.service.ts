@@ -233,6 +233,7 @@ export const addDsaQuestionService = async (
     memoryLimit,
     testCases,
   } = data;
+
   if (role.toLowerCase() != "creator") throw new AppError("FORBIDDEN", 403);
   const contest = await prisma.contest.findFirst({
     where: {

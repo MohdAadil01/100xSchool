@@ -63,7 +63,7 @@ export const loginService = async (data: {
   const token = generateJwtToken({
     id: user.id,
     email: user.email,
-    role: user.email,
+    role: user.role,
   });
 
   const { password, ...userWithoutPassword } = user;

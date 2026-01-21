@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import asyncHandler from "../utils/asyncHandler";
 import {
   addDsaQuestionInputSchema,
@@ -11,6 +11,7 @@ import {
   addMcqToContestService,
   createContestService,
   getContestByIdService,
+  getContestLeaderboardService,
   submitMcqQuestionService,
 } from "../services/contest.service";
 import { ApiResponse } from "../utils/ApiResponse";
@@ -82,5 +83,14 @@ export const addDsaQuestion = asyncHandler(
     );
 
     return res.status(201).json(ApiResponse.success(data));
+  },
+);
+
+export const getContestLeaderboard = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { contestId } = req.params;
+    const data = await getContestLeaderboardService(Number(contestId));
+
+    return res.status(200).json(ApiResponse.success(data));
   },
 );

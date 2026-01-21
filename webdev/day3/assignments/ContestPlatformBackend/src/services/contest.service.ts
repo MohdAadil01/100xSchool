@@ -296,3 +296,112 @@ export const addDsaQuestionService = async (
 
   return question;
 };
+
+export const getContestLeaderboardService = async (contestId: number) => {
+  if (!contestId) throw new AppError("CONTEST_ID_NOT_GIVEN", 404);
+  const contest = await prisma.contest.findFirst({
+    where: {
+      id: contestId,
+    },
+    include: {
+      mcqQuestions: true,
+      dsaQuestions: true,
+    },
+  });
+
+  if (!contest) throw new AppError("CONTEST_NOT_FOUND", 404);
+
+  const users = await prisma.user.findMany({
+    where: {
+      OR: [
+        {
+          mcqSubmissions: {
+            some: {
+              question: {
+                contestId,
+              },
+            },
+          },
+        },
+        {
+          mcqSubmissions: {
+            some: {
+              question: {
+                contestId,
+              },
+            },
+          },
+        },
+      ],
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+
+  const mcqPoints = await prisma.mcqSubmission.groupBy({
+    by: ["userId"],
+    where: {
+      question: {
+        contestId,
+      },
+    },
+    _sum: {
+      pointsEarned: true,
+    },
+  });
+
+  const mcqMap = new Map<number, number>();
+  mcqPoints.forEach((row) => {
+    mcqMap.set(row.userId, row._sum.pointsEarned ?? 0);
+  });
+
+  const dsaBestPerProblem = await prisma.dsaSubmission.groupBy({
+    by: ["userId", "problemId"],
+    where: {
+      problem: {
+        contestId,
+      },
+    },
+    _max: {
+      pointsEarned: true,
+    },
+  });
+
+  const dsaMap = new Map<number, number>();
+  for (const row of dsaBestPerProblem) {
+    const current = dsaMap.get(row.userId) ?? 0;
+    dsaMap.set(row.userId, current + (row._max.pointsEarned ?? 0));
+  }
+
+  const leaderboard = users.map((user) => {
+    const mcq = mcqMap.get(user.id) ?? 0;
+    const dsa = dsaMap.get(user.id) ?? 0;
+
+    return {
+      userId: user.id,
+      name: user.name,
+      totalPoints: mcq + dsa,
+    };
+  });
+
+  leaderboard.sort((a, b) => b.totalPoints - a.totalPoints);
+
+  let rank = 0;
+  let prevScore: number | null = null;
+
+  const rankedLeaderboard = leaderboard.map((entry, index) => {
+    if (prevScore == null || entry.totalPoints < prevScore) {
+      rank = index + 1;
+    }
+    prevScore = entry.totalPoints;
+
+    return {
+      ...entry,
+      rank,
+    };
+  });
+
+  return rankedLeaderboard;
+};

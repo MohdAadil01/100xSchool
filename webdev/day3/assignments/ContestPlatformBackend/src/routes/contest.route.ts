@@ -4,6 +4,7 @@ import {
   addMcqToContest,
   createContest,
   getContestById,
+  getContestLeaderboard,
   submitMcqQuestion,
 } from "../controllers/contest.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
@@ -21,5 +22,11 @@ contestRoute.post(
 );
 
 contestRoute.post("/:contestId/dsa", authMiddleware, addDsaQuestion);
+
+contestRoute.get(
+  "/:contestId/leaderboard",
+  authMiddleware,
+  getContestLeaderboard,
+);
 
 export default contestRoute;

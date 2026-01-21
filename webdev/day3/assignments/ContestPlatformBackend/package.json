@@ -16,9 +16,11 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
+    "@types/axios": "^0.9.36",
     "@types/body-parser": "^1.19.6",
     "@types/dotenv": "^6.1.1",
     "@types/node": "^25.0.9",
+    "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.2",
     "dotenv": "^17.2.3",

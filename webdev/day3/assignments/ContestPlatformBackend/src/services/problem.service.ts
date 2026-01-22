@@ -73,9 +73,9 @@ export const submitDsaProblemService = async (
   const contest = problem.contest;
   if (!contest) throw new AppError("Contest not found.", 404);
 
-  // const now = new Date();
-  // if (contest.startTime < now || now < contest.endTime)
-  //   throw new AppError("CONTEST_NOT_ACTIVE", 400);
+  const now = new Date();
+  if (contest.startTime < now || now < contest.endTime)
+    throw new AppError("CONTEST_NOT_ACTIVE", 400);
 
   let maxExecutionTime = 0;
   let testCasesPassed = 0;

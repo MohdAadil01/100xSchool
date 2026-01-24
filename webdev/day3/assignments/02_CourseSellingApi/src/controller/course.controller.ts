@@ -12,6 +12,7 @@ import {
   getCourseService,
   updateCourseService,
 } from "../services/course.service";
+import { getCourseLessonsService } from "../services/lesson.service";
 
 export const createCourse = asyncHandler(
   async (req: Request, res: Response) => {
@@ -59,6 +60,15 @@ export const deleteCourse = asyncHandler(
       req.user?.role!,
       req.user?.id!,
     );
+    return res.status(200).json(ApiResponse.success(data));
+  },
+);
+
+export const getCourseLessons = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { courseId } = req.params;
+    const data = await getCourseLessonsService(String(courseId));
+
     return res.status(200).json(ApiResponse.success(data));
   },
 );

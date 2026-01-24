@@ -4,7 +4,10 @@ export const signupInputSchema = z.object({
   email: z.string().email("Invalid email."),
   password: z.string().min(6, "Password should be at least 6 char long"),
   name: z.string().min(1, "Name can't be empty"),
-  role: z.enum(["student", "instructor"]),
+  role: z
+    .string()
+    .transform((val) => val.toUpperCase())
+    .pipe(z.enum(["STUDENT", "INSTRUCTOR"])),
 });
 export const loginInputSchema = z.object({
   email: z.string().email("Invalid email."),

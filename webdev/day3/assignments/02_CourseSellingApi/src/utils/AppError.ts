@@ -1,10 +1,10 @@
 export class AppError extends Error {
   statusCode: number;
-  errorMessage: string;
-  constructor(errorMessage: string, statusCode: number) {
-    super(errorMessage);
+  message: string;
+  constructor(message: string, statusCode: number) {
+    super(message);
     this.statusCode = statusCode;
-    this.errorMessage = errorMessage;
+    this.message = message;
 
     Error.captureStackTrace(this, this.constructor);
   }

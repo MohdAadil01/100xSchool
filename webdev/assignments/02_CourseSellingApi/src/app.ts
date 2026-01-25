@@ -15,9 +15,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/v1/auth", authRoute);
+
 app.use("/api/v1/courses", courseRoute);
 
-app.use("/api/v1/lessions", lessionRoute);
+app.use("/api/v1/lessons", lessionRoute);
 
 app.use("/api/v1", purchaseRoute);
 

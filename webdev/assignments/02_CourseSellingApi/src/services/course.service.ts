@@ -48,7 +48,7 @@ export const getCourseByIdService = async (courseId: string) => {
     where: {
       id: courseId,
     },
-    select: {
+    include: {
       lessions: true,
     },
   });

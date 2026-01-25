@@ -13,7 +13,6 @@ export const globalErrorMiddleware = (
     return res.status(err.statusCode).json(ApiResponse.error(err.message));
   }
   if (err instanceof ZodError) {
-    console.log(err.issues[0]);
     const { code, message, path } = err.issues[0];
     return res
       .status(400)

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../utils/AsyncHandler";
 import {
   createPurchaseService,
+  createPurchaseService2,
   getUserPurchasesService,
 } from "../services/purchase.service";
 import { ApiResponse } from "../utils/ApiResponse";
@@ -9,7 +10,7 @@ import { ApiResponse } from "../utils/ApiResponse";
 export const createPurchase = asyncHandler(
   async (req: Request, res: Response) => {
     const { courseId } = req.body;
-    const data = await createPurchaseService(
+    const data = await createPurchaseService2(
       req.user?.role!,
       req.user?.id!,
       courseId,

@@ -35,17 +35,19 @@ model Course {
 
   Instructor User @relation(fields: [instructorId], references: [id])
 
-  lessions  Lession[]
+  lessions  Lesson[]
   purchases Purchase[]
 }
 
-model Lession {
+model Lesson {
   id        String   @id @default(uuid())
   title     String
   content   String
   courseId  String
   course    Course   @relation(fields: [courseId], references: [id])
   createdAt DateTime @default(now())
+
+  @@unique([courseId, title])
 }
 
 model Purchase {

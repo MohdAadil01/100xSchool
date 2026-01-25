@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   createCourse,
   deleteCourse,
-  getCourseByid,
+  getCourseById,
   getCourseLessons,
   getCourses,
   updateCourse,
@@ -13,8 +13,8 @@ const courseRoute = Router();
 
 courseRoute.post("/", authMiddleware, createCourse);
 courseRoute.get("/", getCourses);
+courseRoute.get("/:courseId", getCourseById);
 courseRoute.get("/:courseId/lessons", getCourseLessons);
-courseRoute.get("/:courseId", getCourseByid);
 courseRoute.patch("/:courseId", authMiddleware, updateCourse);
 courseRoute.delete("/:courseId", authMiddleware, deleteCourse);
 

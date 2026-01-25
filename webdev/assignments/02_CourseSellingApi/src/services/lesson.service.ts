@@ -19,7 +19,19 @@ export const createLessonService = async (
   });
   if (!course) throw new AppError("Course not found.", 404);
 
-  const lession = await prisma.lession.create({
+  const existingLesson = await prisma.lesson.findUnique({
+    where: {
+      courseId_title: {
+        courseId,
+        title,
+      },
+    },
+  });
+
+  if (existingLesson)
+    throw new AppError("Lession already there in this course", 400);
+
+  const lesson = await prisma.lesson.create({
     data: {
       title,
       content,
@@ -27,17 +39,17 @@ export const createLessonService = async (
     },
   });
 
-  return lession;
+  return lesson;
 };
 
 export const getCourseLessonsService = async (courseId: string) => {
   if (!courseId) throw new AppError("CourseId not given", 404);
 
-  const lessions = await prisma.lession.findMany({
+  const lessons = await prisma.lesson.findMany({
     where: {
       courseId,
     },
   });
 
-  return lessions;
+  return lessons;
 };

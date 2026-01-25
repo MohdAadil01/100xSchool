@@ -31,7 +31,7 @@ export const getCourses = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json(ApiResponse.success(data));
 });
 
-export const getCourseByid = asyncHandler(
+export const getCourseById = asyncHandler(
   async (req: Request, res: Response) => {
     const { courseId } = req.params;
     const data = await getCourseByIdService(String(courseId));

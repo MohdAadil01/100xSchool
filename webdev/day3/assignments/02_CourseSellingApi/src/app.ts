@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import authRoute from "./routes/auth.route";
 import courseRoute from "./routes/course.route";
 import { globalErrorMiddleware } from "./middleware/error.middleware";
-import lessionRoute from "./routes/lession.route";
+import lessionRoute from "./routes/lesson.route";
 
 config();
 

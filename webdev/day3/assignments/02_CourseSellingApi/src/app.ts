@@ -5,6 +5,7 @@ import authRoute from "./routes/auth.route";
 import courseRoute from "./routes/course.route";
 import { globalErrorMiddleware } from "./middleware/error.middleware";
 import lessionRoute from "./routes/lesson.route";
+import purchaseRoute from "./routes/purchase.route";
 
 config();
 
@@ -17,6 +18,8 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/courses", courseRoute);
 
 app.use("/api/v1/lessions", lessionRoute);
+
+app.use("/api/v1", purchaseRoute);
 
 app.use(globalErrorMiddleware);
 export default app;

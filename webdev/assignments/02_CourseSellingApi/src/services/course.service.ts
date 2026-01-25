@@ -14,11 +14,12 @@ export const createCourseService = async (
   if (role.toLowerCase() != "instructor")
     throw new AppError("UNAUTHORIZED", 403);
   const { title, description, price } = data;
-  const existingCourse = await prisma.course.findFirst({
+  const existingCourse = await prisma.course.findUnique({
     where: {
-      title,
-      description,
-      instructorId,
+      instructorId_title: {
+        instructorId,
+        title,
+      },
     },
   });
   if (existingCourse) throw new AppError("Course already exists", 400);
@@ -49,7 +50,7 @@ export const getCourseByIdService = async (courseId: string) => {
       id: courseId,
     },
     include: {
-      lessions: true,
+      lessons: true,
     },
   });
   if (!course) throw new AppError("Course not found", 404);
@@ -69,6 +70,7 @@ export const updateCourseService = async (
   const course = await prisma.course.findUnique({
     where: {
       id: courseId,
+      instructorId,
     },
   });
   if (!course) throw new AppError("Course not found.", 404);

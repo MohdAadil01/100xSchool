@@ -35,8 +35,10 @@ model Course {
 
   Instructor User @relation(fields: [instructorId], references: [id])
 
-  lessions  Lesson[]
+  lessons   Lesson[]
   purchases Purchase[]
+
+  @@unique([instructorId, title])
 }
 
 model Lesson {

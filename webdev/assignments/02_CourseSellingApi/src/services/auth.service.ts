@@ -2,7 +2,7 @@ import prisma from "../lib/prisma";
 import { AppError } from "../utils/AppError";
 import { generateToken } from "../utils/jwt";
 import { LoginInputType, SignupInputType } from "../validation/auth.validation";
-import bcyrpt from "bcrypt";
+import bcrypt from "bcrypt";
 
 export const signupService = async (data: SignupInputType) => {
   const { email, password, role, name } = data;
@@ -13,7 +13,7 @@ export const signupService = async (data: SignupInputType) => {
   });
 
   if (existingUser) throw new AppError("Email exists.", 400);
-  const hashPassword = await bcyrpt.hash(
+  const hashPassword = await bcrypt.hash(
     password,
     Number(process.env.SALT_ROUNDS!),
   );
@@ -43,7 +43,7 @@ export const loginService = async (data: LoginInputType) => {
     },
   });
   if (!user) throw new AppError("Email not found", 404);
-  const isAuthorized = await bcyrpt.compare(password, user.password);
+  const isAuthorized = await bcrypt.compare(password, user.password);
   if (!isAuthorized) throw new AppError("Invalid Credentials", 400);
 
   const token = generateToken({

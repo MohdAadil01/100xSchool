@@ -102,6 +102,7 @@ export const deleteCourseService = async (
       id: courseId,
     },
   });
+
   if (!course) throw new AppError("course not found", 404);
   const isAuthorized = course?.instructorId == instructorId;
   if (!isAuthorized) throw new AppError("Unauthorized", 403);

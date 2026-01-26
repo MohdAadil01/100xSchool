@@ -77,10 +77,12 @@ export const createPurchaseService2 = async (
 
 export const getUserPurchasesService = async (userId: string) => {
   if (!userId) throw new AppError("UserId not given", 404);
+
   const purchases = await prisma.purchase.findMany({
     where: {
       userId,
     },
   });
+
   return purchases;
 };

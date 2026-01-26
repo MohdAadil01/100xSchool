@@ -1,3 +1,5 @@
-import express from "express";
+import app from "./app";
 
-const 
+app.listen(process.env.PORT || 3030, () => {
+  console.log("✅Application started running.");
+});

@@ -17,7 +17,3 @@ export const loginInputSchema = z.object({
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password too short"),
 });
-
-export type SignupInputType = z.infer<typeof signupInputSchema>;
-
-export type LoginInputType = z.infer<typeof loginInputSchema>;

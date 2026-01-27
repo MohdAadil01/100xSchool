@@ -12,14 +12,13 @@ export const globalErrorHandler = (
 ) => {
   if (err instanceof AppError) {
     res.status(err.statusCode).json(ApiResponse.error(err.message));
-  } else if (err instanceof ZodError) {
+    next();
+  }
+  if (err instanceof ZodError) {
     const issue = err.issues[0];
     console.log(issue.code);
-    res
-      .status(Number(400))
-      .json(
-        ApiResponse.error(`${issue.message} : ${issue.input} : ${issue.path}`),
-      );
+    console.log(`${issue.message} : ${issue.input} : ${issue.path}`);
+    res.status(400).json(ApiResponse.error("INVALID_REQUEST"));
     next();
   }
 

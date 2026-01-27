@@ -7,10 +7,15 @@ export const signupInputSchema = z.object({
   role: z
     .string()
     .transform((val) => val.toUpperCase())
-    .pipe(z.enum(["OWNER", "CUSTOMER"])),
-  phone: z.string().regex(/^\+91[6-9]\d{9}$/, {
-    message: "Invalid Indian phone number (+91XXXXXXXXXX required)",
-  }),
+    .pipe(z.enum(["OWNER", "CUSTOMER"]))
+    .default("CUSTOMER"),
+  phone: z
+    .string()
+    .regex(/^\+91[6-9]\d{9}$/, {
+      message: "Invalid Indian phone number (+91XXXXXXXXXX required)",
+    })
+    .optional()
+    .transform((val) => val ?? null),
 });
 
 export const loginInputSchema = z.object({

@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
+  role      Role
+  phone     String
+  createdAt DateTime  @default(now())
+  hotels    Hotel[]
+  bookings  Booking[]
+  reviews   Review[]
+}
+
+model Hotel {
+  id           String    @id @default(uuid())
+  ownerId      String
+  owner        User      @relation(fields: [ownerId], references: [id])
+  name         String
+  description  String
+  city         String
+  country      String
+  amenities    Json      @default("{}")
+  rating       Decimal   @default(0.0) @db.Decimal(2, 1)
+  totalReviews Int       @default(0)
+  createdAt    DateTime  @default(now())
+  rooms        Room[]
+  bookings     Booking[]
+  reviews      Review[]
+}
+
+model Room {
+  id            String       @id @default(uuid())
+  hotelId       String
+  hotel         Hotel        @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  roomNumber    Int
+  roomType      String
+  pricePerNight Decimal      @db.Decimal(10, 2)
+  maxOccupancy  Int
+  createdAt     DateTime     @default(now())
+  status        Availability @default(AVAILABLE)
+  bookings      Booking[]
+
+  @@unique([hotelId, roomNumber])
+}
+
+model Booking {
+  id          String        @id @default(uuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  roomId      String
+  room        Room          @relation(fields: [roomId], references: [id])
+  hotelId     String
+  hotel       Hotel         @relation(fields: [hotelId], references: [id])
+  checkin     DateTime
+  checkout    DateTime
+  guests      Int           @default(1)
+  totalPrice  Decimal       @db.Decimal(10, 2)
+  status      BookingStatus @default(CONFIRMED)
+  bookingDate DateTime      @default(now())
+  cancelledAt DateTime
+  reviews     Review[]
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  hotelId   String
+  hotel     Hotel    @relation(fields: [hotelId], references: [id])
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, bookingId])
+}
+
+enum Role {
+  CUSTOMER
+  OWNER
+}
+
+enum Availability {
+  AVAILABLE
+  BOOKED
+  MAINTENANCE
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+}

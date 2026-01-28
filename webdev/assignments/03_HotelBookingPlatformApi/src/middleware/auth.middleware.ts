@@ -8,10 +8,10 @@ export const authMiddleware = (
   next: NextFunction,
 ) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader) throw new AppError("Auth Header not given", 404);
+  if (!authHeader) throw new AppError("UNAUTHORIZED", 401);
 
   const token = authHeader.split(" ")[1];
-  if (!token) throw new AppError("Token not found", 404);
+  if (!token) throw new AppError("UNAUTHORIZED", 401);
 
   const decodedData = jwt.verify(
     token,
@@ -20,7 +20,7 @@ export const authMiddleware = (
     id: string;
     role: string;
   };
-  if (!decodedData) throw new AppError("Token Invalid", 400);
+  if (!decodedData) throw new AppError("UNAUTHORIZED", 401);
 
   req.user = {
     id: decodedData.id,

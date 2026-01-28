@@ -34,13 +34,15 @@ model Hotel {
   description  String
   city         String
   country      String
-  amenities    Json      @default("{}")
+  amenities    Json      @default("[]")
   rating       Decimal   @default(0.0) @db.Decimal(2, 1)
   totalReviews Int       @default(0)
   createdAt    DateTime  @default(now())
   rooms        Room[]
   bookings     Booking[]
   reviews      Review[]
+
+  @@unique([ownerId, name, city])
 }
 
 model Room {

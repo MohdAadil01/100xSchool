@@ -14,6 +14,7 @@ export const globalErrorHandler = (
     res.status(err.statusCode).json(ApiResponse.error(err.message));
     next();
   }
+
   if (err instanceof ZodError) {
     const issue = err.issues[0];
     console.log(issue.code);

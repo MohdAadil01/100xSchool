@@ -59,21 +59,21 @@ model Room {
 }
 
 model Booking {
-  id          String        @id @default(uuid())
-  userId      String
-  user        User          @relation(fields: [userId], references: [id])
-  roomId      String
-  room        Room          @relation(fields: [roomId], references: [id])
-  hotelId     String
-  hotel       Hotel         @relation(fields: [hotelId], references: [id])
-  checkin     DateTime
-  checkout    DateTime
-  guests      Int           @default(1)
-  totalPrice  Decimal       @db.Decimal(10, 2)
-  status      BookingStatus @default(CONFIRMED)
-  bookingDate DateTime      @default(now())
-  cancelledAt DateTime
-  reviews     Review[]
+  id           String        @id @default(uuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  roomId       String
+  room         Room          @relation(fields: [roomId], references: [id])
+  hotelId      String
+  hotel        Hotel         @relation(fields: [hotelId], references: [id])
+  checkInDate  DateTime
+  checkOutDate DateTime
+  guests       Int           @default(1)
+  totalPrice   Decimal       @db.Decimal(10, 2)
+  status       BookingStatus @default(CONFIRMED)
+  bookingDate  DateTime      @default(now())
+  cancelledAt  DateTime
+  reviews      Review[]
 }
 
 model Review {

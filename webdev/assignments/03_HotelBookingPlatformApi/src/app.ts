@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // !using routes
 app.use("/api/auth", authRoute);
-app.use("/api", hotelRoute);
+app.use("/api/hotels", hotelRoute);
 
 // !using middlewares
 app.use(globalErrorHandler);

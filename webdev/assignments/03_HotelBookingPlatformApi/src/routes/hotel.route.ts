@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { createHotel } from "../controller/hotel.controller";
+import { addRoomToHotel, createHotel } from "../controller/hotel.controller";
 
 const hotelRoute = Router();
 
-hotelRoute.post("/hotels", authMiddleware, createHotel);
+hotelRoute.post("/", authMiddleware, createHotel);
+hotelRoute.post("/:hotelId/rooms", authMiddleware, addRoomToHotel);
 
 export default hotelRoute;

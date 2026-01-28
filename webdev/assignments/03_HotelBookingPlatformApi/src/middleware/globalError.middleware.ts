@@ -11,18 +11,17 @@ export const globalErrorHandler = (
   next: NextFunction,
 ) => {
   if (err instanceof AppError) {
-    res.status(err.statusCode).json(ApiResponse.error(err.message));
-    next();
+    return res.status(err.statusCode).json(ApiResponse.error(err.message));
   }
 
   if (err instanceof ZodError) {
     const issue = err.issues[0];
     console.log(issue.code);
     console.log(`${issue.message} : ${issue.input} : ${issue.path}`);
-    res.status(400).json(ApiResponse.error("INVALID_REQUEST"));
-    next();
+    return res.status(400).json(ApiResponse.error("INVALID_REQUEST"));
   }
 
   res.status(500).json(ApiResponse.error("Unhandled Error: " + err.message));
   next();
+  return;
 };

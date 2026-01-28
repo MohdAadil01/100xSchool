@@ -14,3 +14,17 @@ export const createHotelInputSchema = z.object({
     )
     .min(1, "Atleast one amenity is required"),
 });
+
+export const addRoomToHotelInputSchema = z.object({
+  roomNumber: z.coerce.number().int().min(1),
+  roomType: z
+    .string()
+    .min(2, "Room type shoult be atleast 2 character long")
+    .transform((v) => v.toUpperCase()),
+  pricePerNight: z.number().nonnegative("Price can't be negative"),
+  maxOccupancy: z
+    .number()
+    .int()
+    .nonnegative("Occupancy can't be negative")
+    .min(1),
+});

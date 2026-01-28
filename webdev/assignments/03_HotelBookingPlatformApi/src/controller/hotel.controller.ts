@@ -7,6 +7,7 @@ import {
 import {
   addRoomToHotelService,
   createHotelService,
+  getHotelsService,
 } from "../services/hotel.service";
 import { ApiResponse } from "../utils/ApiResponse";
 
@@ -38,3 +39,9 @@ export const addRoomToHotel = AsyncHandler(
     return res.status(201).json(ApiResponse.success(data));
   },
 );
+
+export const getHotels = AsyncHandler(async (req: Request, res: Response) => {
+  const data = await getHotelsService(req.query);
+
+  return res.status(200).json(ApiResponse.success(data));
+});

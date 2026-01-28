@@ -9,6 +9,7 @@ export const createHotelService = async (
   input: CreateHotelInputType & { role: string; ownerId: string },
 ) => {
   const { name, description, city, country, amenities, role, ownerId } = input;
+
   if (role.toLowerCase() != "owner") throw new AppError("FORBIDDEN", 403);
 
   const hotel = await prisma.hotel.create({
@@ -68,4 +69,73 @@ export const addRoomToHotelService = async (
   });
 
   return room;
+};
+
+export const getHotelsService = async (query: {
+  city?: string;
+  country?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minRating?: number;
+}) => {
+  const hotels = await prisma.hotel.findMany({
+    where: {
+      ...(query.city && {
+        city: {
+          equals: query.city,
+          mode: "insensitive",
+        },
+      }),
+      ...(query.country && {
+        country: {
+          equals: query.country,
+          mode: "insensitive",
+        },
+      }),
+      ...(query.minRating && {
+        rating: {
+          gte: query.minRating,
+        },
+      }),
+    },
+    include: {
+      rooms: {
+        where: {
+          ...(query.minPrice && {
+            pricePerNight: { gte: query.minPrice },
+          }),
+          ...(query.maxPrice && {
+            pricePerNight: {
+              lte: query.maxPrice,
+            },
+          }),
+        },
+        select: {
+          pricePerNight: true,
+        },
+      },
+    },
+  });
+
+  const data = hotels
+    .filter((hotel) => hotel.rooms.length > 0)
+    .map((hotel) => {
+      const minPricePerNight = Math.min(
+        ...hotel.rooms.map((r) => Number(r.pricePerNight)),
+      );
+
+      return {
+        id: hotel.id,
+        name: hotel.name,
+        description: hotel.description,
+        city: hotel.city,
+        country: hotel.country,
+        amenities: hotel.amenities,
+        rating: hotel.rating,
+        totalReviews: hotel.totalReviews,
+        minPricePerNight,
+      };
+    });
+
+  return data;
 };

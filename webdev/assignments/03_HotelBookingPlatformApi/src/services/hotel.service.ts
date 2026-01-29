@@ -145,6 +145,9 @@ export const getHotelService = async (hotelId: string, ownerId: string) => {
     where: {
       id: hotelId,
     },
+    include: {
+      rooms: true,
+    },
   });
   if (!hotel) throw new AppError("HOTEL_NOT_FOUND", 404);
   if (hotel.ownerId != ownerId) throw new AppError("UNAUTHORIZED", 401);

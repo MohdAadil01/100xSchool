@@ -1,6 +1,8 @@
+import { string } from "zod";
 import { CreateBookingInputType } from "../@types/app/booking.types";
 import { prisma } from "../lib/prisma";
 import { AppError } from "../utils/AppError";
+import { BookingStatus } from "../generated/prisma/enums";
 
 export const createBookingService = async (
   input: CreateBookingInputType,
@@ -75,4 +77,21 @@ export const createBookingService = async (
     bookingDate: booking.bookingDate,
   };
   return data;
+};
+
+export const getBookingService = async (
+  customerId: string,
+  role: string,
+  query: { status?: BookingStatus },
+) => {
+  if (role.toLowerCase() != "customer") throw new AppError("FORBIDDEN", 403);
+
+  const booking = await prisma.booking.findMany({
+    where: {
+      ...(query?.status && { status: query.status }),
+      userId: customerId,
+    },
+  });
+
+  return booking;
 };

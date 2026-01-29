@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { createBooking } from "../controller/booking.controller";
+import { createBooking, getBooking } from "../controller/booking.controller";
 
 const bookingRoute = Router();
 
-bookingRoute.post("/bookings", authMiddleware, createBooking);
-
+bookingRoute.post("/", authMiddleware, createBooking);
+bookingRoute.get("/", authMiddleware, getBooking);
 export default bookingRoute;

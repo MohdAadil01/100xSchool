@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // !using routes
 app.use("/api/auth", authRoute);
 app.use("/api/hotels", hotelRoute);
-app.use("/api", bookingRoute);
+app.use("/api/bookings", bookingRoute);
 
 // !using middlewares
 app.use(globalErrorHandler);

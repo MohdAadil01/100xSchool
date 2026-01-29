@@ -1,8 +1,15 @@
 import { Request, Response } from "express";
-import { createBookingService } from "../services/booking.service";
+import {
+  createBookingService,
+  getBookingService,
+} from "../services/booking.service";
 import { AsyncHandler } from "../utils/AsyncHandler";
-import { createBookingInputSchema } from "../validation/booking.validation";
+import {
+  bookingQuerySchema,
+  createBookingInputSchema,
+} from "../validation/booking.validation";
 import { ApiResponse } from "../utils/ApiResponse";
+import { BookingStatus } from "../generated/prisma/enums";
 
 export const createBooking = AsyncHandler(
   async (req: Request, res: Response) => {
@@ -16,3 +23,11 @@ export const createBooking = AsyncHandler(
     return res.status(201).json(ApiResponse.success(data));
   },
 );
+
+export const getBooking = AsyncHandler(async (req: Request, res: Response) => {
+  const query = bookingQuerySchema.parse(req.query);
+
+  const data = await getBookingService(req.user?.id!, req.user?.role!, query);
+
+  res.status(200).json(ApiResponse.success(data));
+});

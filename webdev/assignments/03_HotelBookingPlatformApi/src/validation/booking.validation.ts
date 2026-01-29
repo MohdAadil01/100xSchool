@@ -40,3 +40,13 @@ export const createBookingInputSchema = z.object({
   checkOutDate: z.coerce.date(),
   guests: z.number(),
 });
+
+export const bookingQuerySchema = z
+  .object({
+    status: z
+      .string()
+      .transform((v) => v.toUpperCase())
+      .pipe(z.enum(["CONFIRMED", "CANCELLED"]))
+      .optional(),
+  })
+  .strict();

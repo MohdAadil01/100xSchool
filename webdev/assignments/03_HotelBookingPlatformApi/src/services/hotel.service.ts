@@ -139,3 +139,15 @@ export const getHotelsService = async (query: {
 
   return data;
 };
+
+export const getHotelService = async (hotelId: string, ownerId: string) => {
+  const hotel = await prisma.hotel.findFirst({
+    where: {
+      id: hotelId,
+    },
+  });
+  if (!hotel) throw new AppError("HOTEL_NOT_FOUND", 404);
+  if (hotel.ownerId != ownerId) throw new AppError("UNAUTHORIZED", 401);
+
+  return hotel;
+};

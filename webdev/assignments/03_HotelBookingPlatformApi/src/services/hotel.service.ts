@@ -145,8 +145,25 @@ export const getHotelService = async (hotelId: string, ownerId: string) => {
     where: {
       id: hotelId,
     },
-    include: {
-      rooms: true,
+    select: {
+      id: true,
+      ownerId: true,
+      name: true,
+      description: true,
+      city: true,
+      country: true,
+      amenities: true,
+      rating: true,
+      totalReviews: true,
+      rooms: {
+        select: {
+          id: true,
+          roomNumber: true,
+          roomType: true,
+          pricePerNight: true,
+          maxOccupancy: true,
+        },
+      },
     },
   });
   if (!hotel) throw new AppError("HOTEL_NOT_FOUND", 404);

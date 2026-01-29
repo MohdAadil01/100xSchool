@@ -74,8 +74,10 @@ model Booking {
   totalPrice   Decimal       @db.Decimal(10, 2)
   status       BookingStatus @default(CONFIRMED)
   bookingDate  DateTime      @default(now())
-  cancelledAt  DateTime
+  cancelledAt  DateTime?
   reviews      Review[]
+
+  @@unique([userId, hotelId, roomId])
 }
 
 model Review {

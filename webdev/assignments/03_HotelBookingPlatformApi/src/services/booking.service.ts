@@ -101,6 +101,7 @@ export const cancelBookingService = async (
   userId: string,
   role: string,
 ) => {
+  if (role.toLowerCase() != "customer") throw new AppError("FORBIDDEN", 403);
   const booking = await prisma.booking.findFirst({
     where: {
       id: bookingId,

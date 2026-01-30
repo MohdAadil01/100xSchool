@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import {
+  cancelBookingService,
   createBookingService,
   getBookingService,
 } from "../services/booking.service";
@@ -9,7 +10,6 @@ import {
   createBookingInputSchema,
 } from "../validation/booking.validation";
 import { ApiResponse } from "../utils/ApiResponse";
-import { BookingStatus } from "../generated/prisma/enums";
 
 export const createBooking = AsyncHandler(
   async (req: Request, res: Response) => {
@@ -31,3 +31,16 @@ export const getBooking = AsyncHandler(async (req: Request, res: Response) => {
 
   res.status(200).json(ApiResponse.success(data));
 });
+
+export const cancelBooking = AsyncHandler(
+  async (req: Request, res: Response) => {
+    const { bookingId } = req.params;
+    const data = await cancelBookingService(
+      String(bookingId),
+      req.user?.id!,
+      req.user?.role!,
+    );
+
+    return res.status(200).json(ApiResponse.success(data));
+  },
+);

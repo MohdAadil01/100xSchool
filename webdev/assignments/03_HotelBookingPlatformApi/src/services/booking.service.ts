@@ -95,3 +95,45 @@ export const getBookingService = async (
 
   return booking;
 };
+
+export const cancelBookingService = async (
+  bookingId: string,
+  userId: string,
+  role: string,
+) => {
+  const booking = await prisma.booking.findFirst({
+    where: {
+      id: bookingId,
+    },
+  });
+  if (!booking) throw new AppError("BOOKING_NOT_FOUND", 404);
+
+  if (booking.userId != userId) throw new AppError("FORBIDDEN", 403);
+
+  const now = new Date();
+  const checkIn = new Date(booking.checkInDate);
+  const hoursUntilCheckIn = (Number(checkIn) - Number(now)) / (1000 * 60 * 60);
+
+  if (hoursUntilCheckIn < 24)
+    throw new AppError("CANCELLATION_DEADLINE_PASSED", 400);
+
+  if (booking.status == "CANCELLED")
+    throw new AppError("ALREADY_CANCELLED", 400);
+
+  const cancelledBooking = await prisma.booking.update({
+    where: {
+      id: bookingId,
+    },
+    data: {
+      status: "CANCELLED",
+      cancelledAt: now,
+    },
+    select: {
+      id: true,
+      status: true,
+      cancelledAt: true,
+    },
+  });
+
+  return cancelledBooking;
+};

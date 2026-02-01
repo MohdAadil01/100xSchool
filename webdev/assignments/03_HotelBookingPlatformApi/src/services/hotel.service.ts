@@ -46,7 +46,9 @@ export const addRoomToHotelService = async (
       rooms: true,
     },
   });
+
   if (!existingHotel) throw new AppError("HOTEL_NOT_FOUND", 404);
+
   if (existingHotel.ownerId != ownerId) throw new AppError("FORBIDDEN", 403);
   const existingRoom = await prisma.room.findUnique({
     where: {
@@ -56,6 +58,7 @@ export const addRoomToHotelService = async (
       },
     },
   });
+
   if (existingRoom) throw new AppError("ROOM_ALREADY_EXISTS", 400);
 
   const room = await prisma.room.create({
@@ -102,11 +105,13 @@ export const getHotelsService = async (query: {
       rooms: {
         where: {
           ...(query.minPrice && {
-            pricePerNight: { gte: query.minPrice },
+            pricePerNight: {
+              gte: Number(query.minPrice),
+            },
           }),
           ...(query.maxPrice && {
             pricePerNight: {
-              lte: query.maxPrice,
+              lte: Number(query.maxPrice),
             },
           }),
         },
@@ -167,7 +172,8 @@ export const getHotelService = async (hotelId: string, ownerId: string) => {
     },
   });
   if (!hotel) throw new AppError("HOTEL_NOT_FOUND", 404);
-  if (hotel.ownerId != ownerId) throw new AppError("UNAUTHORIZED", 401);
+
+  // if (hotel.ownerId != ownerId) throw new AppError("UNAUTHORIZED", 401);
 
   return hotel;
 };

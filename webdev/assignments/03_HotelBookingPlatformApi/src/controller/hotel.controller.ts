@@ -51,5 +51,5 @@ export const getHotel = AsyncHandler(async (req: Request, res: Response) => {
   const { hotelId } = req.params;
   const data = await getHotelService(String(hotelId), req.user?.id!);
 
-  return res.status(200).json(data);
+  return res.status(200).json(ApiResponse.success(data));
 });

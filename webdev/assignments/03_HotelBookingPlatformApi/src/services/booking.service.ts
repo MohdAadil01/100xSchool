@@ -20,7 +20,6 @@ export const createBookingService = async (
   });
 
   if (!room) throw new AppError("ROOM_NOT_FOUND", 404);
-  if (room.status == "BOOKED") throw new AppError("ROOM_NOT_AVAILABLE", 400);
 
   const hotelId = room.hotelId;
 
@@ -28,26 +27,24 @@ export const createBookingService = async (
   today.setHours(0, 0, 0, 0);
   const checkIn = new Date(checkInDate);
   const checkOut = new Date(checkOutDate);
-  if (checkIn <= today || checkOut <= checkIn)
-    throw new AppError("INVALID_DATES", 400);
 
-  if (guests <= 0 || guests > 10) throw new AppError("INVALID_CAPACITY", 400);
+  if (guests <= 0 || guests > room.maxOccupancy)
+    throw new AppError("INVALID_CAPACITY", 400);
 
   const nights =
     (Number(new Date(checkOutDate)) - Number(new Date(checkInDate))) /
     (1000 * 60 * 60 * 24);
   const totalPrice: number = nights * Number(room.pricePerNight);
 
-  const alreadyBooked = await prisma.booking.findUnique({
+  const conflict = await prisma.booking.findFirst({
     where: {
-      userId_hotelId_roomId: {
-        userId: customerId,
-        roomId,
-        hotelId,
-      },
+      roomId,
+      status: "CONFIRMED",
+      checkInDate: { lt: checkOut },
+      checkOutDate: { gt: checkIn },
     },
   });
-  if (alreadyBooked) throw new AppError("ROOM_NOT_AVAILABLE", 400);
+  if (conflict) throw new AppError("ROOM_NOT_AVAILABLE", 400);
 
   const booking = await prisma.$transaction(async (tx) => {
     const booking = await tx.booking.create({

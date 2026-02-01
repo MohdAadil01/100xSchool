@@ -1,26 +1,29 @@
 import z from "zod";
 
 export const createHotelInputSchema = z.object({
-  name: z.string().min(4, "Name too short"),
-  description: z.string().min(10, "Description too short"),
-  city: z.string().min(4, "City too short"),
-  country: z.string().min(4, "Country too short"),
+  name: z.string().trim().min(1),
+
+  description: z.string().trim().min(10).optional().default(""),
+
+  city: z.string().trim().min(1),
+
+  country: z.string().trim().min(1),
+
   amenities: z
     .array(
       z
         .string()
-        .min(1, "Amenity cannot be empty")
-        .transform((val) => val.toLowerCase().trim()),
+        .trim()
+        .min(1)
+        .transform((v) => v.toLowerCase()),
     )
-    .min(1, "Atleast one amenity is required"),
+    .optional()
+    .default([]),
 });
 
 export const addRoomToHotelInputSchema = z.object({
-  roomNumber: z.coerce.number().int().min(1),
-  roomType: z
-    .string()
-    .min(2, "Room type shoult be atleast 2 character long")
-    .transform((v) => v.toUpperCase()),
+  roomNumber: z.string().min(1),
+  roomType: z.string().min(2, "Room type shoult be atleast 2 character long"),
   pricePerNight: z.number().nonnegative("Price can't be negative"),
   maxOccupancy: z
     .number()

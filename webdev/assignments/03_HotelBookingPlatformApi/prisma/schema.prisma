@@ -31,11 +31,11 @@ model Hotel {
   ownerId      String
   owner        User      @relation(fields: [ownerId], references: [id])
   name         String
-  description  String
+  description  String?
   city         String
   country      String
-  amenities    Json      @default("[]")
-  rating       Decimal   @default(0.0) @db.Decimal(2, 1)
+  amenities    String[]  @default([])
+  rating       Float     @default(0)
   totalReviews Int       @default(0)
   createdAt    DateTime  @default(now())
   rooms        Room[]
@@ -49,9 +49,9 @@ model Room {
   id            String       @id @default(uuid())
   hotelId       String
   hotel         Hotel        @relation(fields: [hotelId], references: [id], onDelete: Cascade)
-  roomNumber    Int
+  roomNumber    String
   roomType      String
-  pricePerNight Decimal      @db.Decimal(10, 2)
+  pricePerNight Int
   maxOccupancy  Int
   createdAt     DateTime     @default(now())
   status        Availability @default(AVAILABLE)

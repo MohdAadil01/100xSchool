@@ -13,7 +13,7 @@ hotelRoute.post("/", authMiddleware, createHotel);
 
 hotelRoute.post("/:hotelId/rooms", authMiddleware, addRoomToHotel);
 
-hotelRoute.get("/", getHotels);
+hotelRoute.get("/", authMiddleware, getHotels);
 hotelRoute.get("/:hotelId", authMiddleware, getHotel);
 
 export default hotelRoute;

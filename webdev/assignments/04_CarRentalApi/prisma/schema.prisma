@@ -12,3 +12,28 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id        String    @id @default(uuid())
+  username  String
+  password  String
+  createdAt DateTime  @default(now())
+  bookings  Booking[]
+}
+
+model Booking {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  carName    String
+  days       Int
+  rentPerDay Int
+  status     Status
+  createdAt  DateTime @default(now())
+}
+
+enum Status {
+  booked
+  completed
+  cancelled
+}

@@ -14,13 +14,8 @@ export const authMiddleware = (
   }
   if (err instanceof ZodError) {
     const issues = err.issues[0];
-    return res
-      .status(400)
-      .json(
-        ApiResponse.error(
-          `${issues.message} : ${issues.path} : ${issues.input}`,
-        ),
-      );
+    console.log(`${issues.message} : ${issues.path} : ${issues.input}`);
+    return res.status(400).json(ApiResponse.error("invalid inputs"));
   }
 
   console.log(err);

@@ -3,7 +3,7 @@ import { AppError } from "../utils/Error";
 import { ApiResponse } from "../utils/ApiResponse";
 import { ZodError } from "zod";
 
-export const authMiddleware = (
+export const globalErrorMiddleware = (
   err: Error,
   req: Request,
   res: Response,

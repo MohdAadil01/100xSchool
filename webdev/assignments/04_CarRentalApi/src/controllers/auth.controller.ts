@@ -10,6 +10,7 @@ export const signup = AsyncHandler(async (req: Request, res: Response) => {
 
   return res.status(201).json(ApiResponse.success(data));
 });
+
 export const login = AsyncHandler(async (req: Request, res: Response) => {
   const parsedBody = authInputSchema.parse(req.body);
   const data = await loginService(parsedBody);

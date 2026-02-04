@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { AppError } from "../utils/Error";
 
 export const authMiddleware = (
   req: Request,
@@ -8,11 +9,14 @@ export const authMiddleware = (
 ) => {
   try {
     const authHeader = req.headers.authorization;
-    const token = authHeader?.split(" ")[1];
-    if (!authHeader || !token) {
-      // return unauthorized
+    if (!authHeader) {
+      throw new AppError(401, "Authorization header missing");
     }
 
+    const token = authHeader?.split(" ")[1];
+    if (!token) {
+      throw new AppError(401, "Token missing after Bearer");
+    }
     const decoded = jwt.verify(token!, process.env.JWT_SECRET!) as JwtPayload;
 
     req.user = {
@@ -21,6 +25,7 @@ export const authMiddleware = (
     };
     next();
   } catch (error) {
-    // return error
+    console.log(error);
+    throw new AppError(401, "Token invalid");
   }
 };

@@ -147,3 +147,28 @@ export const getUserBookingService = async (
     totalCost: b.days * b.rentPerDay,
   }));
 };
+
+export const deleteBookingService = async (
+  userId: string,
+  bookingId: string,
+) => {
+  const booking = await prisma.booking.findFirst({
+    where: {
+      id: bookingId,
+    },
+  });
+
+  if (!booking) throw new AppError(404, "Booking not found.");
+
+  if (booking.userId != userId) throw new AppError(403, "not a booking owner");
+
+  const deleted = await prisma.booking.delete({
+    where: {
+      userId: userId,
+      id: bookingId,
+    },
+  });
+  return {
+    message: "Booking deleted",
+  };
+};

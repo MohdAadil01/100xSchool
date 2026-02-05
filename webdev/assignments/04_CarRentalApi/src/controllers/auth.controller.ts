@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AsyncHandler } from "../utils/AsyncHandler";
 import { authInputSchema } from "../validators/auth.validator";
-import { loginService, signupService } from "../services/auth.services";
+import { loginService, signupService } from "../services/auth.service";
 import { ApiResponse } from "../utils/ApiResponse";
 
 export const signup = AsyncHandler(async (req: Request, res: Response) => {

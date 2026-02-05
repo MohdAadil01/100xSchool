@@ -22,14 +22,17 @@ model User {
 }
 
 model Booking {
-  id         String   @id @default(uuid())
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  carName    String
-  days       Int
-  rentPerDay Int
-  status     Status
-  createdAt  DateTime @default(now())
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  carName     String
+  days        Int
+  rentPerDay  Int
+  status      Status   @default(booked)
+  bookingDate DateTime
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, bookingDate])
 }
 
 enum Status {

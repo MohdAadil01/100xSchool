@@ -32,7 +32,7 @@ model Booking {
   bookingDate DateTime
   createdAt   DateTime @default(now())
 
-  @@unique([userId, bookingDate])
+  @@unique([userId, bookingDate, status])
 }
 
 enum Status {

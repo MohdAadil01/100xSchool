@@ -1,5 +1,6 @@
 import {
   CreateBookingInputType,
+  GetBookingInputType,
   UpdateBookingInputType,
 } from "../@types/application/booking.types";
 import { prisma } from "../lib/db";
@@ -79,4 +80,70 @@ export const updateBookingService = async (
       totalCost: updatedBooking.days * updatedBooking.rentPerDay,
     },
   };
+};
+
+export const getUserBookingService = async (
+  query: GetBookingInputType,
+  userId: string,
+) => {
+  const { bookingId, summary } = query;
+  if (bookingId) {
+    const booking = await prisma.booking.findFirst({
+      where: {
+        id: bookingId,
+      },
+    });
+    if (!booking) throw new AppError(404, "Booking not found.");
+
+    return {
+      id: booking?.id,
+      carName: booking?.carName,
+      days: booking?.days,
+      rentPerDay: booking?.rentPerDay,
+      status: booking?.status,
+      totalCost: booking?.rentPerDay! * booking?.days!,
+    };
+  }
+  if (summary == "true") {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      include: {
+        bookings: {
+          where: {
+            status: {
+              in: ["booked", "completed"],
+            },
+          },
+        },
+      },
+    });
+    const totalBookings = user?.bookings.length ?? 0;
+    const totalAmountSpent =
+      user?.bookings.reduce((acc, b) => {
+        return acc + b.days * b.rentPerDay;
+      }, 0) ?? 0;
+
+    return {
+      userId,
+      username: user?.username,
+      totalBookings,
+      totalAmountSpent,
+    };
+  }
+
+  const bookings = await prisma.booking.findMany({
+    where: {
+      userId,
+    },
+  });
+  return bookings.map((b) => ({
+    id: b.id,
+    car_name: b.carName,
+    days: b.days,
+    rent_per_day: b.rentPerDay,
+    status: b.status,
+    totalCost: b.days * b.rentPerDay,
+  }));
 };

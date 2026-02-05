@@ -21,3 +21,8 @@ export const updateBookingInputSchema = z
       .pipe(z.enum(["booked", "completed", "cancelled"])),
   })
   .strict();
+
+export const getBookingInputSchema = z.object({
+  bookingId: z.string().optional(),
+  summary: z.string().optional,
+});

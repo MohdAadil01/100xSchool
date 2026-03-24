@@ -1,10 +1,14 @@
-const signup = async () => {};
+import { AppError } from "../utils/Error";
 
-const signin = async () => {};
+const signup = async () => {
+  throw new AppError(300, "testing message");
+};
 
-const authService = {
+const signin = async (message: string) => {
+  console.log("signin" + message);
+};
+
+export const authService = {
   signup,
   signin,
 };
-
-export default authService;

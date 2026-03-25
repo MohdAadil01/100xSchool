@@ -15,7 +15,7 @@ const signupInputSchema = z.object({
 });
 
 const signinInputSchema = z.object({
-  username: z.string().min(2, "Username too short"),
+  email: z.string().min(2, "Username too short"),
   password: z.string().min(6, "Password too short"),
 });
 

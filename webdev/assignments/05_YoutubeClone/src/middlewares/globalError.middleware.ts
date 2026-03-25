@@ -10,14 +10,16 @@ export const globalError = (
   next: NextFunction,
 ) => {
   if (err instanceof AppError) {
-    console.log(err);
-    ApiResponse.error(401, "App Error");
+    return res
+      .status(err.status)
+      .json(ApiResponse.error(err.status, err.error));
   } else if (err instanceof ZodError) {
-    console.log(err.issues);
-    ApiResponse.error(400, "Zod Error");
+    const errorResponse = `${err.issues[0].message} : ${err.issues[0].path}`;
+    return res.status(400).json(ApiResponse.error(400, errorResponse));
   }
 
-  console.log(err);
-  ApiResponse.error(400, "Unhandled error");
+  return res
+    .status(400)
+    .json(ApiResponse.error(400, "Unhandled Error:" + err.message));
   next();
 };

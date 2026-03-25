@@ -58,7 +58,7 @@ const signin = async (input: SigninInputType) => {
 
   const isAuthorized = await bcrypt.compare(password, existingUser.password);
   if (!isAuthorized) {
-    throw new AppError(409, "UNAUTHORIZED");
+    throw new AppError(409, "Wrong Credentials.");
   }
 
   const token = JWT.generateToken({ id: existingUser.id });

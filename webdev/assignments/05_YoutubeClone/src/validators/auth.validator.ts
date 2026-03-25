@@ -1,13 +1,19 @@
 import z from "zod";
 
 const signupInputSchema = z.object({
-  email: z.email("Invalid Email"),
+  email: z.string().email("Invalid Email"),
   password: z.string().min(6, "Password too short"),
   gender: z
     .string()
     .transform((val) => val.trim().toUpperCase())
     .pipe(z.enum(["MALE", "FEMALE"])),
-  dob: z.date(),
+  dob: z.preprocess((val) => {
+    if (typeof val == "string") {
+      return new Date(val);
+    } else {
+      return val;
+    }
+  }, z.date()),
   channelName: z.string().min(2, "Channel name is too short"),
   banner: z.string().optional(),
   profilePicture: z.string().optional(),

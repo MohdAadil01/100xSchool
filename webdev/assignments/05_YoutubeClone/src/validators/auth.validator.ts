@@ -1,7 +1,7 @@
 import z from "zod";
 
 const signupInputSchema = z.object({
-  username: z.string().min(2, "Username too short"),
+  email: z.email("Invalid Email"),
   password: z.string().min(6, "Password too short"),
   gender: z
     .string()
@@ -11,6 +11,7 @@ const signupInputSchema = z.object({
   channelName: z.string().min(2, "Channel name is too short"),
   banner: z.string().optional(),
   profilePicture: z.string().optional(),
+  description: z.string().optional(),
 });
 
 const signinInputSchema = z.object({

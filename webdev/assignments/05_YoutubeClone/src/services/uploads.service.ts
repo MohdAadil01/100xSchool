@@ -2,8 +2,10 @@ import { UploadInputType } from "../@types/app/upload.types";
 import { prisma } from "../lib/prisma";
 import { AppError } from "../utils/Error";
 
-const upload = async (input: UploadInputType) => {
-  const { videoUrl, thumbnail, userId } = input;
+const upload = async (input: UploadInputType, userId: string) => {
+  const { videoUrl, thumbnail } = input;
+
+  console.log(userId);
 
   const upload = await prisma.upload.create({
     data: {
@@ -21,15 +23,15 @@ const remove = async (uploadId: string, userId: string) => {
     throw new AppError(404, "ID not given.");
   }
 
-  await prisma.upload.delete({
+  const upload = await prisma.upload.deleteMany({
     where: {
       id: uploadId,
       userId,
     },
   });
 
-  if (!upload) {
-    throw new AppError(404, "Uploaded video not found.");
+  if (upload.count === 0) {
+    throw new AppError(404, "Uploaded video not found or unauthorized.");
   }
 
   return { message: "Successfully removed the video." };
@@ -41,6 +43,8 @@ const getAll = async (userId: string) => {
       userId,
     },
   });
+
+  return uploads;
 };
 
 const getSingle = async (uploadId: string, userId: string) => {

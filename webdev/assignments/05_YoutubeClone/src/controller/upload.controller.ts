@@ -6,16 +6,16 @@ import { ApiResponse } from "../utils/ApiResponse";
 
 const upload = AsyncHandler(async (req: Request, res: Response) => {
   const parsedBody = uploadValidator.uploadInputSchema.parse(req.body);
-
-  const data = await uploadService.upload(parsedBody);
+  const userId = req.user?.id;
+  const data = await uploadService.upload(parsedBody, userId!);
   return res.status(201).json(ApiResponse.success(201, data));
 });
 
 const remove = AsyncHandler(async (req: Request, res: Response) => {
-  const uploadId = req.body;
-  const userId = req.body;
+  const { uploadId } = req.params;
+  const userId = req.user?.id;
 
-  const data = await uploadService.remove(uploadId, userId);
+  const data = await uploadService.remove(String(uploadId), userId!);
 
   return res.status(200).json(ApiResponse.success(200, data));
 });

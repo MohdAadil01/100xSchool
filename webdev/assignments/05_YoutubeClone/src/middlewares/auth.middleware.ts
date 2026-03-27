@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError } from "../utils/Error";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 export const authMiddleware = (
   req: Request,
@@ -16,8 +16,11 @@ export const authMiddleware = (
     throw new AppError(404, "Auth Token not set.");
   }
 
-  const decodedData = jwt.verify(token, process.env.JWT_SECRET!);
-  console.log(decodedData);
+  const decodedData = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+
+  req.user = {
+    id: decodedData.id,
+  };
 
   next();
 };

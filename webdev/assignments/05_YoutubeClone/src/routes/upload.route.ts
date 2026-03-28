@@ -4,7 +4,7 @@ import { uploadController } from "../controller/upload.controller";
 
 const uploadRoute = express.Router();
 
-uploadRoute.post("/upload", authMiddleware, uploadController.upload);
+uploadRoute.post("/", authMiddleware, uploadController.upload);
 uploadRoute.delete("/:uploadId", authMiddleware, uploadController.remove);
 uploadRoute.get("/", authMiddleware, uploadController.getAll);
 uploadRoute.get("/:uploadId", authMiddleware, uploadController.getSingle);

@@ -35,9 +35,15 @@ const getSingle = AsyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json(ApiResponse.success(200, data));
 });
 
+const getPresignedUrl = AsyncHandler(async (req: Request, res: Response) => {
+  const data = await uploadService.getPresignedUrl();
+  return res.status(200).json(ApiResponse.success(200, data));
+});
+
 export const uploadController = {
   upload,
   remove,
   getAll,
   getSingle,
+  getPresignedUrl,
 };

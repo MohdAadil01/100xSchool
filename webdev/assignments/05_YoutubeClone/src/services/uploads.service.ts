@@ -1,6 +1,9 @@
 import { UploadInputType } from "../@types/app/upload.types";
 import { prisma } from "../lib/prisma";
 import { AppError } from "../utils/Error";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { S3 } from "../utils/S3Client";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 
 const upload = async (input: UploadInputType, userId: string) => {
   const { videoUrl, thumbnail } = input;
@@ -60,9 +63,33 @@ const getSingle = async (uploadId: string, userId: string) => {
   return upload;
 };
 
+const getPresignedUrl = async () => {
+  const videoPath = `videos/${Math.random()}.mp4`;
+
+  const putUrl = await getSignedUrl(
+    S3,
+    new PutObjectCommand({
+      Bucket: "youtube-clone",
+      Key: videoPath,
+      ContentType: "video/mp4",
+    }),
+    {
+      expiresIn: 3600,
+    },
+  );
+
+  const videoUrl = `${process.env.R2_ACCESS_URL}/${videoPath}`;
+
+  return {
+    putUrl,
+    videoUrl,
+  };
+};
+
 export const uploadService = {
   upload,
   remove,
   getAll,
   getSingle,
+  getPresignedUrl,
 };

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AsyncHandler } from "../utils/AsyncHandler";
-import { videoService } from "../services/video.services";
+import { videoService } from "../services/video.service";
 import { ApiResponse } from "../utils/ApiResponse";
 
 const getRecommendations = AsyncHandler(async (req: Request, res: Response) => {

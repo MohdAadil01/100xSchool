@@ -2,7 +2,11 @@ import { prisma } from "../lib/prisma";
 import { AppError } from "../utils/Error";
 
 const getRecommendations = async () => {
-  const allVideos = await prisma.upload.findMany({});
+  const allVideos = await prisma.upload.findMany({
+    include: {
+      user: true,
+    },
+  });
   return allVideos;
 };
 

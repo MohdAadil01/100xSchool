@@ -8,8 +8,6 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 const upload = async (input: UploadInputType, userId: string) => {
   const { videoUrl, thumbnail } = input;
 
-  console.log(userId);
-
   const upload = await prisma.upload.create({
     data: {
       videoUrl,

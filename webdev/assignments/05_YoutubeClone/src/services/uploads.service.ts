@@ -63,8 +63,9 @@ const getSingle = async (uploadId: string, userId: string) => {
 
 const getPresignedUrl = async () => {
   const videoPath = `videos/${Math.random()}.mp4`;
+  const thumbnailPath = `images/${Math.random()}.mp4`;
 
-  const putUrl = await getSignedUrl(
+  const putUrlVideo = await getSignedUrl(
     S3,
     new PutObjectCommand({
       Bucket: "youtube-clone",
@@ -76,11 +77,24 @@ const getPresignedUrl = async () => {
     },
   );
 
-  const videoUrl = `${process.env.R2_ACCESS_URL}/${videoPath}`;
+  const putUrlThumbnail = await getSignedUrl(
+    S3,
+    new PutObjectCommand({
+      Bucket: "youtube-clone",
+      Key: thumbnailPath,
+      ContentType: "image/jpeg",
+    }),
+    { expiresIn: 3600 },
+  );
+
+  const getUrlVideo = `${process.env.R2_ACCESS_URL}/${videoPath}`;
+  const getUrlThumbnail = `${process.env.R2_ACCESS_URL}/${thumbnailPath}`;
 
   return {
-    putUrl,
-    videoUrl,
+    putUrlVideo,
+    putUrlThumbnail,
+    getUrlVideo,
+    getUrlThumbnail,
   };
 };
 

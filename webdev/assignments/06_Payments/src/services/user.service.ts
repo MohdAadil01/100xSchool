@@ -16,7 +16,7 @@ const singup = async (input: SignupInput) => {
 
   const hashedPassword = await bcrypt.hash(
     password,
-    Number(process.env.SALT_ROUNDS)!,
+    Number(process.env.SALT_ROUNDS)! || 10,
   );
 
   const user = await User.create({
@@ -26,16 +26,23 @@ const singup = async (input: SignupInput) => {
     lastName,
   });
 
-  const { password: ext, ...userWithoutPassword } = user;
+  const { password: ext, ...userWithoutPassword } = user.toObject();
 
   return userWithoutPassword;
 };
+
 const login = async (input: LoginInput) => {
   const { email, password } = input;
 
   const user = await User.findOne({ email });
   if (!user) {
     throw new AppError("User not found", 404);
+  }
+
+  const isAuthorized = await bcrypt.compare(password, user.password);
+
+  if (!isAuthorized) {
+    throw new AppError("Invalid credentials", 401);
   }
 
   const token = generateToken(String(user._id));

@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
 import { string } from "zod";
 
-export const generateToken = (id: string) => {
+export const generateToken = (data: { userId: string }) => {
   try {
-    const token = jwt.sign(string, process.env.JWT_SECRET!, {
+    const token = jwt.sign(data, process.env.JWT_SECRET!, {
       expiresIn: "10d",
     });
     return token;

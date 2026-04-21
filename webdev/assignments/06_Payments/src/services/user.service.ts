@@ -45,7 +45,7 @@ const login = async (input: LoginInput) => {
     throw new AppError("Invalid credentials", 401);
   }
 
-  const token = generateToken(String(user._id));
+  const token = generateToken({ userId: String(user._id) });
 
   return token;
 };

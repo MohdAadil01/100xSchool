@@ -13,10 +13,10 @@ export const create = AsyncHandler(async (req: Request, res: Response) => {
 
 export const getAccountDetails = AsyncHandler(
   async (req: Request, res: Response) => {
-    const userId = req.userId;
-    const data = await accountService.getAccountDetails(userId);
+    const userId = req.user?.userId;
+    const data = await accountService.getAccountDetails(userId!);
 
-    return res.status(200).json(ApiResponse.success(data));
+    return res.status(200).json(ApiResponse.success(200, data));
   },
 );
 

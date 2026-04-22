@@ -25,7 +25,7 @@ const getAccountDetails = async (userId: string) => {
 
   const account = Account.findOne({
     userId,
-  }).populate("userId");
+  });
 
   return account;
 };

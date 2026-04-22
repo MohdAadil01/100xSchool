@@ -5,7 +5,12 @@ import { accountValidator } from "../validators/account.validator";
 import { ApiResponse } from "../utils/ApiResponse";
 
 export const create = AsyncHandler(async (req: Request, res: Response) => {
-  const parsedBody = accountValidator.createAccountInputSchema.parse(req.body);
+  const userId = req.user?.userId;
+  const balance = req.body.balance;
+  const parsedBody = accountValidator.createAccountInputSchema.parse({
+    userId,
+    balance,
+  });
   const data = await accountService.create(parsedBody);
 
   return res.status(201).json(ApiResponse.success(201, data));

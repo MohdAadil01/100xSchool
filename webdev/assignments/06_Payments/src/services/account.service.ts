@@ -17,15 +17,19 @@ const create = async (input: CreateAccountInputType) => {
     balance,
   });
 
-  return account;
+  return account.toObject();
 };
 
 const getAccountDetails = async (userId: string) => {
   if (!userId) throw new AppError("user Id not given", 404);
 
-  const account = Account.findOne({
+  const account = await Account.findOne({
     userId,
   });
+
+  if (!account) {
+    throw new AppError("Account not found", 404);
+  }
 
   return account;
 };

@@ -10,10 +10,7 @@ const transfer = async (input: TransferInputType) => {
   if (to == from) {
     throw new AppError("Cannot transfer to your own account", 400);
   }
-  const fromUser = await User.findById(from);
-  const toUser = await User.findById(to);
-  if (!fromUser) throw new AppError("Sender not found with the given id", 404);
-  if (!toUser) throw new AppError("Receiver not found with the given id", 404);
+
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
@@ -27,10 +24,10 @@ const transfer = async (input: TransferInputType) => {
       throw new AppError("Insufficient balance", 400);
     }
     sender.balance -= amount;
-    sender.save({ session });
+    await sender.save({ session });
 
     receiver.balance += amount;
-    receiver.save({ session });
+    await receiver.save({ session });
 
     const txn = await Transaction.create([
       {
@@ -47,7 +44,8 @@ const transfer = async (input: TransferInputType) => {
   } catch (error) {
     await session.abortTransaction();
     console.log(error);
-    throw new AppError("Transaction failed", 400);
+    if (error instanceof AppError) throw error;
+    throw new AppError("Transaction failed", 500);
   } finally {
     session.endSession();
   }
@@ -59,7 +57,7 @@ const getTransactionDetails = async (userId: string) => {
   const txns = await Transaction.find({
     $or: [{ from: userId }, { to: userId }],
   })
-    .populate("from", "firstName, lastName email")
+    .populate("from", "firstName lastName email")
     .populate("to", "firstName, lastName email")
     .sort({ createdAt: -1 });
 

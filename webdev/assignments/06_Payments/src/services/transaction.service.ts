@@ -53,7 +53,21 @@ const transfer = async (input: TransferInputType) => {
   }
 };
 
-const getTransactionDetails = async () => {};
+const getTransactionDetails = async (userId: string) => {
+  if (!userId) throw new AppError("User id not given", 404);
+
+  const txns = await Transaction.find({
+    $or: [{ from: userId }, { to: userId }],
+  })
+    .populate("from", "firstName, lastName email")
+    .populate("to", "firstName, lastName email")
+    .sort({ createdAt: -1 });
+
+  if (txns.length == 0) {
+    throw new AppError("No transactions found", 404);
+  }
+  return txns;
+};
 
 export const txnService = {
   transfer,

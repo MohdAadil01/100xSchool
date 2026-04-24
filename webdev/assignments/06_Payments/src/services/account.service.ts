@@ -1,5 +1,3 @@
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWViYTYxMzkwYzU2OTRiNTFiM2IyNzAiLCJpYXQiOjE3NzcwNTExNjIsImV4cCI6MTc3NzkxNTE2Mn0.3AqBHQ8kGGqg-uRLneja62eWsrEr03HoJ-4IRd3_J_8
-
 import { CreateAccountInputType } from "../@types/app/account.type";
 import { Account } from "../model/account.model";
 import { AppError } from "../utils/AppError";

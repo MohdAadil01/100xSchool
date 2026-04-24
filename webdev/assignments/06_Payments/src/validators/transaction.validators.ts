@@ -12,7 +12,8 @@ const transferInputSchema = z.object({
   status: z
     .string()
     .transform((val) => val.toLowerCase())
-    .pipe(z.enum(["pending", "completed", "failed"])),
+    .pipe(z.enum(["pending", "completed", "failed"]))
+    .optional(),
 });
 
 export const txnValidator = {

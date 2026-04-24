@@ -5,4 +5,5 @@ import { txnController } from "../controller/transaction.controller";
 export const txnRouter = Router();
 
 txnRouter.post("/transfer", authMiddleware, txnController.transfer);
+
 txnRouter.get("/getall", authMiddleware, txnController.getTransactionDetails);

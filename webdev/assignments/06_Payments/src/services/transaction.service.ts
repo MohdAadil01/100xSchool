@@ -7,6 +7,7 @@ import { Transaction } from "../model/transaction.model";
 
 const transfer = async (input: TransferInputType) => {
   const { from, to, amount, status } = input;
+
   if (to == from) {
     throw new AppError("Cannot transfer to your own account", 400);
   }
@@ -14,8 +15,8 @@ const transfer = async (input: TransferInputType) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const sender = await Account.findOne({ userId: from }).session(session);
-    const receiver = await Account.findOne({ userId: to }).session(session);
+    const sender = await Account.findOne({ user: from }).session(session);
+    const receiver = await Account.findOne({ user: to }).session(session);
 
     if (!sender) throw new AppError("Sender with user Id not found", 404);
     if (!receiver) throw new AppError("Receiver with user Id not found", 404);
@@ -58,7 +59,7 @@ const getTransactionDetails = async (userId: string) => {
     $or: [{ from: userId }, { to: userId }],
   })
     .populate("from", "firstName lastName email")
-    .populate("to", "firstName, lastName email")
+    .populate("to", "firstName lastName email")
     .sort({ createdAt: -1 });
 
   if (txns.length == 0) {

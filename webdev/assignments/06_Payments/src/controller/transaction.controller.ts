@@ -6,10 +6,12 @@ import { ApiResponse } from "../utils/ApiResponse";
 
 const transfer = AsyncHandler(async (req: Request, res: Response) => {
   const from = req.user?.userId;
-  const { to, status } = req.body;
+  const { to, status, amount } = req.body;
+
   const parsedData = txnValidator.transferInputSchema.parse({
     from,
     to,
+    amount,
     status,
   });
   const data = await txnService.transfer(parsedData);

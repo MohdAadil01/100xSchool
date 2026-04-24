@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { string } from "zod";
+import { AppError } from "./AppError";
 
 export const generateToken = (data: { userId: string }) => {
   try {
@@ -8,6 +9,6 @@ export const generateToken = (data: { userId: string }) => {
     });
     return token;
   } catch (error) {
-    console.log("Error while generating token " + error);
+    throw new AppError("Error while generating token", 400);
   }
 };

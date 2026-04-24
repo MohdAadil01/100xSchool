@@ -9,7 +9,13 @@ export const authMiddleware = (
 ) => {
   try {
     const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      throw new AppError("Header not provied", 409);
+    }
+
     const token = authHeader?.split("Bearer ")[1];
+
     if (!token) {
       throw new AppError("Unauthorized", 409);
     }

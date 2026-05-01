@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  name        String
+  email       String
+  submissions Submission[]
+  progesses   Progess[]
+}
+
+model Course {
+  id        Int       @id @default(autoincrement())
+  title     String
+  problems  Problem[]
+  progesses Progess[]
+}
+
+model Problem {
+  id          Int          @id @default(autoincrement())
+  description String
+  courseId    Int
+  course      Course       @relation(fields: [courseId], references: [id])
+  submissions Submission[]
+}
+
+model Submission {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  problemId   Int
+  submittedAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  problem Problem @relation(fields: [problemId], references: [id])
+}
+
+model Progess {
+  id         Int     @id @default(autoincrement())
+  userId     Int
+  courseId   Int
+  completion Decimal @default(0.0) @db.Decimal(5, 2)
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}

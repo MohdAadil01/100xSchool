@@ -1,4 +1,4 @@
-class ApiResponse<T> {
+export class ApiResponse<T> {
   status: number;
   data: T | undefined;
   error: string | undefined;

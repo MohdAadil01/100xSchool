@@ -1,5 +1,21 @@
 import express from "express";
-
+import cors from "cors";
+import { errorMiddleware } from "./middleware/error.middleware";
+import { authRoute } from "./routes/auth.routes";
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  }),
+);
+
+app.use("/api/v1/auth", authRoute);
+
+app.use(errorMiddleware);
 
 export default app;

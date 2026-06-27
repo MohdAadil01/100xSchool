@@ -1,12 +1,16 @@
-import app from "./app";
-import { connectDb } from "./config/db";
 import { config } from "dotenv";
-
 config();
 
-const PORT = process.env.PORT || 8080;
+import app from "./app";
+import { connectDb } from "./config/db";
 
-app.listen(PORT, () => {
-  connectDb();
-  console.log(`Application started to work on port ${PORT}`);
-});
+const PORT = process.env.PORT || 9000;
+
+const start = async () => {
+  await connectDb();
+  app.listen(PORT, () => {
+    console.log(`✅Application started to work on port ${PORT}`);
+  });
+};
+
+start();

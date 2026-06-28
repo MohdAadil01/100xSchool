@@ -1,0 +1,124 @@
+.app {
+  min-height: 100vh;
+  padding: 2.5rem 1.5rem 3rem;
+  background: linear-gradient(160deg, #0f172a 0%, #1e293b 45%, #0f172a 100%);
+  color: #e2e8f0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.app-header {
+  max-width: 42rem;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
+.app-header h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #f8fafc;
+}
+
+.app-header p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #94a3b8;
+}
+
+.todo-list {
+  display: grid;
+  gap: 0.875rem;
+  max-width: 42rem;
+  margin: 0 auto;
+  list-style: none;
+  padding: 0;
+}
+
+.todo-card {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem 1.125rem;
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.todo-card:hover {
+  border-color: rgba(148, 163, 184, 0.35);
+  transform: translateY(-1px);
+}
+
+.todo-card--done {
+  background: rgba(15, 118, 110, 0.12);
+  border-color: rgba(45, 212, 191, 0.25);
+}
+
+.todo-card__status {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.125rem;
+  border-radius: 50%;
+  border: 2px solid #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: transparent;
+}
+
+.todo-card--done .todo-card__status {
+  border-color: #2dd4bf;
+  background: #14b8a6;
+  color: #0f172a;
+}
+
+.todo-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-card__meta {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+}
+
+.todo-card__title {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: #f1f5f9;
+  word-break: break-word;
+}
+
+.todo-card--done .todo-card__title {
+  color: #94a3b8;
+  text-decoration: line-through;
+  text-decoration-color: rgba(148, 163, 184, 0.6);
+}
+
+.todo-card__badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 999px;
+}
+
+.todo-card__badge--pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+.todo-card__badge--done {
+  background: rgba(45, 212, 191, 0.15);
+  color: #2dd4bf;
+}

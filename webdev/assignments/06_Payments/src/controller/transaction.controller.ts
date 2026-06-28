@@ -14,6 +14,7 @@ const transfer = AsyncHandler(async (req: Request, res: Response) => {
     amount,
     status,
   });
+
   const data = await txnService.transfer(parsedData);
 
   return res.status(200).json(ApiResponse.success(200, data));

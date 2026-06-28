@@ -19,5 +19,5 @@ export const errorMiddleware = (
 
   return res
     .status(500)
-    .json(ApiResponse.fail(500, err.message, "Unhandlere error"));
+    .json(ApiResponse.fail(500, err.message, "Unhandled error"));
 };

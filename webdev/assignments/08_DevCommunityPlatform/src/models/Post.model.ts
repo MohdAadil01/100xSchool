@@ -11,7 +11,7 @@ export interface IPost extends Document {
   author: mongoose.Types.ObjectId;
   type: "post" | "question";
   votes: number;
-  voters: IVoter[];
+  voters?: IVoter[];
   views: number;
   isAnswered: boolean;
   acceptedAnswer?: mongoose.Types.ObjectId;
@@ -43,25 +43,28 @@ export const postSchema = new mongoose.Schema<IPost>(
       type: Number,
       default: 0,
     },
-    voters: [
-      {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
+    voters: {
+      type: [
+        {
+          user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+          voteType: {
+            type: String,
+            enum: ["upvote", "downvote"],
+          },
         },
-        voteType: {
-          type: String,
-          enum: ["upvote", "downvote"],
-        },
-      },
-    ],
+      ],
+      default: [],
+    },
     views: {
       type: Number,
       default: 0,
     },
     isAnswered: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     acceptedAnswer: {
       type: mongoose.Schema.Types.ObjectId,

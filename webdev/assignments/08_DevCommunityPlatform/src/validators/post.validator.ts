@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { exactOptional, string } from "zod";
 
 export const createPostInputSchema = z.object({
   title: z.string().min(3, "Title should be atleast 3 characters long"),
@@ -11,4 +11,11 @@ export const createPostInputSchema = z.object({
   tags: z.array(z.string()),
 });
 
+export const voteInputSchema = z.object({
+  userId: z.string(),
+  postId: z.string(),
+  voteType: z.enum(["upvote", "downvote"]),
+});
+
 export type CreatePostInputType = z.infer<typeof createPostInputSchema>;
+export type VoteInputType = z.infer<typeof voteInputSchema>;

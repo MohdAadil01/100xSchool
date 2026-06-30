@@ -1,6 +1,11 @@
+import mongoose from "mongoose";
 import { Post } from "../models/Post.model";
 import { AppError } from "../utils/AppError";
-import { CreatePostInputType } from "../validators/post.validator";
+import {
+  CreatePostInputType,
+  VoteInputType,
+} from "../validators/post.validator";
+import { User } from "../models/User.model";
 
 const create = async (input: CreatePostInputType, author: string) => {
   const { title, body, type, tags } = input;
@@ -59,9 +64,65 @@ const remove = async (postId: string, userId: string) => {
   return "Deleted";
 };
 
+const vote = async (input: VoteInputType) => {
+  const { postId, userId, voteType } = input;
+  const post = await Post.findById(postId);
+  if (!post) throw new AppError(404, "Post not found.");
+
+  if (String(post.author) == userId)
+    throw new AppError(403, "Can not vote on your own post");
+
+  const userAlreadyVoted = post.voters?.find((u) => String(u.user) === userId);
+
+  if (userAlreadyVoted) {
+    const typeVoted = userAlreadyVoted?.voteType;
+    if (typeVoted == voteType) {
+      typeVoted == "upvote"
+        ? await User.findByIdAndUpdate(post.author, {
+            $inc: { reputation: -10 },
+          })
+        : await User.findByIdAndUpdate(post.author, {
+            $inc: { reputation: 5 },
+          });
+      post.votes -= 1;
+      const index = post.voters?.findIndex((u) => String(u.user) == userId);
+      post.voters?.splice(index!, 1);
+    } else {
+      userAlreadyVoted.voteType = voteType;
+      if (voteType === "upvote") {
+        post.votes += 2;
+        await User.findByIdAndUpdate(post.author, {
+          $inc: { reputation: 15 },
+        });
+      } else {
+        post.votes -= 2;
+        await User.findByIdAndUpdate(post.author, {
+          $inc: { reputation: -15 },
+        });
+      }
+    }
+  } else {
+    post.voters?.push({ user: new mongoose.Types.ObjectId(userId), voteType });
+    post.votes += 1;
+    voteType === "upvote"
+      ? await User.findByIdAndUpdate(post.author, {
+          $inc: { reputation: 10 },
+        })
+      : await User.findByIdAndUpdate(post.author, {
+          $inc: { reputation: -5 },
+        });
+  }
+
+  await post.save();
+  post.populate("author", "name reputation");
+
+  return post;
+};
+
 export const postService = {
   create,
   getPost,
   getPosts,
   remove,
+  vote,
 };

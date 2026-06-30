@@ -1,6 +1,9 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { AsyncHandler } from "../utils/AsyncHandler";
-import { createPostInputSchema } from "../validators/post.validator";
+import {
+  createPostInputSchema,
+  voteInputSchema,
+} from "../validators/post.validator";
 import { postService } from "../services/post.service";
 import { ApiResponse } from "../utils/ApiResponse";
 
@@ -37,7 +40,18 @@ const remove = AsyncHandler(async (req: Request, res: Response) => {
 });
 
 const update = AsyncHandler(async (req: Request, res: Response) => {});
-const vote = AsyncHandler(async (req: Request, res: Response) => {});
+
+const vote = AsyncHandler(async (req: Request, res: Response) => {
+  const userId = String(req.user?.id);
+  const postId = String(req.params.postId);
+  const { voteType } = req.body;
+
+  const parsedBody = voteInputSchema.parse({ userId, postId, voteType });
+
+  const response = await postService.vote(parsedBody);
+
+  return res.status(200).json(ApiResponse.ok(200, response, "Voted"));
+});
 
 export const postController = {
   create,

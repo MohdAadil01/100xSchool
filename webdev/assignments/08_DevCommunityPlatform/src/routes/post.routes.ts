@@ -6,7 +6,7 @@ export const postRoute = Router();
 
 postRoute.post("/", authMiddleware, postController.create);
 postRoute.get("/", postController.getPosts);
-postRoute.get("/:id", postController.getPost);
-postRoute.put("/:id", authMiddleware, postController.update);
-postRoute.delete("/:id", authMiddleware, postController.remove);
-postRoute.post("/:id/vote", authMiddleware, postController.vote);
+postRoute.get("/:postId", postController.getPost);
+postRoute.put("/:postId", authMiddleware, postController.update);
+postRoute.delete("/:postId", authMiddleware, postController.remove);
+postRoute.post("/:postId/vote", authMiddleware, postController.vote);

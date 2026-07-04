@@ -3,6 +3,7 @@ import cors from "cors";
 import { errorMiddleware } from "./middleware/error.middleware";
 import { authRoute } from "./routes/auth.routes";
 import { postRoute } from "./routes/post.routes";
+import { commentRoute } from "./routes/comment.route";
 const app = express();
 
 app.use(express.json());
@@ -17,6 +18,7 @@ app.use(
 
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/posts", postRoute);
+app.use("/api/v1/comments", commentRoute);
 
 app.use(errorMiddleware);
 

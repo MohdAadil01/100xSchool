@@ -3,6 +3,7 @@ import { Post } from "../models/Post.model";
 import { AppError } from "../utils/AppError";
 import {
   CreatePostInputType,
+  UpdatePostInputType,
   VoteInputType,
 } from "../validators/post.validator";
 import { User } from "../models/User.model";
@@ -119,10 +120,31 @@ const vote = async (input: VoteInputType) => {
   return post;
 };
 
+const update = async (
+  input: UpdatePostInputType,
+  postId: string,
+  userId: string,
+) => {
+  const { title, body, tags } = input;
+  const post = await Post.findById(postId);
+  if (!post) throw new AppError(404, "Post not found");
+
+  const isAuthor = String(post.author) === userId;
+  if (!isAuthor) throw new AppError(403, "Not authorized");
+
+  if (title) post.title = title;
+  if (body) post.body = body;
+  if (tags) post.tags = tags;
+
+  await post.save();
+
+  return post;
+};
 export const postService = {
   create,
   getPost,
   getPosts,
   remove,
   vote,
+  update,
 };

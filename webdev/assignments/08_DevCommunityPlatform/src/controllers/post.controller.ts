@@ -2,6 +2,7 @@ import { Request, response, Response } from "express";
 import { AsyncHandler } from "../utils/AsyncHandler";
 import {
   createPostInputSchema,
+  updatePostInputSchema,
   voteInputSchema,
 } from "../validators/post.validator";
 import { postService } from "../services/post.service";
@@ -39,7 +40,19 @@ const remove = AsyncHandler(async (req: Request, res: Response) => {
   return res.status(204).json(ApiResponse.ok(204, response, "Success"));
 });
 
-const update = AsyncHandler(async (req: Request, res: Response) => {});
+const update = AsyncHandler(async (req: Request, res: Response) => {
+  const { postId } = req.params;
+  const userId = req.user?.id;
+  const parsedBody = updatePostInputSchema.parse(req.body);
+
+  const data = await postService.update(
+    parsedBody,
+    String(postId),
+    String(userId),
+  );
+
+  return res.status(200).json(ApiResponse.ok(200, data, "Updated post"));
+});
 
 const vote = AsyncHandler(async (req: Request, res: Response) => {
   const userId = String(req.user?.id);

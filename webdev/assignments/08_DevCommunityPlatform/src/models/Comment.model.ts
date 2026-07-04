@@ -28,7 +28,7 @@ const commentSchema = new mongoose.Schema<IComment>(
     parentComment: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",
-      required: true,
+      default: null,
     },
     votes: {
       type: Number,

@@ -47,9 +47,23 @@ const remove = AsyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json(ApiResponse.ok(200, data, "Removed comment"));
 });
 
+const acceptAnswer = AsyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  const { postId, commentId } = req.params;
+
+  const data = await commentService.acceptAnswer(
+    userId!,
+    String(postId),
+    String(commentId),
+  );
+
+  return res.status(200).json(ApiResponse.ok(200, data, "Accepted answer"));
+});
+
 export const commentController = {
   comment,
   reply,
   getAll,
   remove,
+  acceptAnswer,
 };

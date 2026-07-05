@@ -12,3 +12,9 @@ commentRoute.post(
 );
 commentRoute.get("/:postId", commentController.getAll);
 commentRoute.delete("/:commentId", authMiddleware, commentController.remove);
+
+commentRoute.post(
+  "/:postId/:commentId/accpet",
+  authMiddleware,
+  commentController.acceptAnswer,
+);

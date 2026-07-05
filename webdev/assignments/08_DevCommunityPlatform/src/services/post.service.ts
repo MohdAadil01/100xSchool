@@ -140,6 +140,21 @@ const update = async (
 
   return post;
 };
+
+const search = async (searchTerm: string) => {
+  const posts = await Post.find({
+    $or: [
+      { title: { $regex: searchTerm, $options: "i" } },
+      { body: { $regex: searchTerm, $options: "i" } },
+      { tags: { $in: [searchTerm] } },
+    ],
+  })
+    .populate("author", "name avatar reputation")
+    .sort({ createdAt: -1 });
+
+  return posts;
+};
+
 export const postService = {
   create,
   getPost,
@@ -147,4 +162,5 @@ export const postService = {
   remove,
   vote,
   update,
+  search,
 };

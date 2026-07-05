@@ -6,6 +6,7 @@ export const postRoute = Router();
 
 postRoute.post("/", authMiddleware, postController.create);
 postRoute.get("/", postController.getPosts);
+postRoute.get("/search", postController.search);
 postRoute.get("/:postId", postController.getPost);
 postRoute.put("/:postId", authMiddleware, postController.update);
 postRoute.delete("/:postId", authMiddleware, postController.remove);

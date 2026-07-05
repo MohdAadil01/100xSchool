@@ -7,6 +7,7 @@ import {
 } from "../validators/post.validator";
 import { postService } from "../services/post.service";
 import { ApiResponse } from "../utils/ApiResponse";
+import { AppError } from "../utils/AppError";
 
 const create = AsyncHandler(async (req: Request, res: Response) => {
   const parsedBody = createPostInputSchema.parse(req.body);
@@ -66,6 +67,14 @@ const vote = AsyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json(ApiResponse.ok(200, response, "Voted"));
 });
 
+const search = AsyncHandler(async (req: Request, res: Response) => {
+  const { q } = req.query;
+  if (!q) throw new AppError(400, "Search query is required");
+  const data = await postService.search(String(q));
+
+  return res.status(200).json(ApiResponse.ok(200, data, "Fetched"));
+});
+
 export const postController = {
   create,
   getPost,
@@ -73,4 +82,5 @@ export const postController = {
   update,
   remove,
   vote,
+  search,
 };

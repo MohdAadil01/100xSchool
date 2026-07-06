@@ -20,7 +20,7 @@ const comment = AsyncHandler(async (req: Request, res: Response) => {
 const reply = AsyncHandler(async (req: Request, res: Response) => {
   const parsedBody = commentInputSchema.parse(req.body);
   const userId = req.user?.id;
-  const { postId, parentCommentId } = req.params;
+  const { postId, commentId: parentCommentId } = req.params;
   const data = await commentService.reply(
     parsedBody,
     userId!,

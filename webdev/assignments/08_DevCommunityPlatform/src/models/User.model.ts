@@ -42,6 +42,8 @@ const userSchema = new mongoose.Schema<IUser>(
     },
     avatar: {
       type: String,
+      default:
+        "https://www.vectorstock.com/royalty-free-vectors/default-user-vectors",
     },
     bio: {
       type: String,

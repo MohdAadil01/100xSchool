@@ -16,7 +16,10 @@ const comment = async (
     post: postId,
   });
 
-  return comment;
+  return (await comment.populate("author", "name avatar")).populate(
+    "post",
+    "title type",
+  );
 };
 
 const reply = async (
@@ -37,7 +40,24 @@ const reply = async (
     parentComment: parentCommentId,
   });
 
-  return reply;
+  return await reply.populate([
+    {
+      path: "author",
+      select: "name avatar",
+    },
+    {
+      path: "post",
+      select: "title type",
+    },
+    {
+      path: "parentComment",
+      select: "content author",
+      populate: {
+        path: "author",
+        select: "name avatar",
+      },
+    },
+  ]);
 };
 
 const getAll = async (postId: string) => {

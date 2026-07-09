@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { AsyncHandler } from "../utils/AsyncHandler";
-import { registerInputSchema } from "../validators/auth.validator";
+import {
+  loginInputSchema,
+  registerInputSchema,
+} from "../validators/auth.validator";
 import { authService } from "../services/auth.service";
 import { ApiResponse } from "../utils/ApiResponse";
 
@@ -12,10 +15,10 @@ const register = AsyncHandler(async (req: Request, res: Response) => {
 });
 
 const login = AsyncHandler(async (req: Request, res: Response) => {
-  const parsedBody = registerInputSchema.parse(req.body);
+  const parsedBody = loginInputSchema.parse(req.body);
   const response = await authService.login(parsedBody);
 
-  return res.status(200).json(ApiResponse.ok(200, response, "Registered"));
+  return res.status(200).json(ApiResponse.ok(200, response, "Logged in"));
 });
 
 export const authController = {

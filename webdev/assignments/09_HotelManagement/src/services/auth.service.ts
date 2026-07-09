@@ -27,7 +27,10 @@ const register = async (input: RegisterInputType) => {
   if (role !== "superadmin" && !property)
     throw new AppError(400, "Property is required for this role");
 
-  const hashedPassword = await bcrypt.hash(password, process.env.SALT!);
+  const hashedPassword = await bcrypt.hash(
+    password,
+    Number(process.env.SALT) || 10,
+  );
 
   const user = await User.create({
     firstName,
@@ -55,8 +58,8 @@ const login = async (input: LoginInputType) => {
   const existingUser = await User.findOne({ email });
   if (!existingUser) throw new AppError(404, "User not found.");
 
-  const isAuthorize = bcrypt.compare(password, existingUser.password);
-  if (!isAuthorize) throw new AppError(403, "You are not authorized");
+  const isAuthorize = await bcrypt.compare(password, existingUser.password);
+  if (!isAuthorize) throw new AppError(401, "Invalid credentials");
 
   const token = generateToken({
     id: existingUser.id,

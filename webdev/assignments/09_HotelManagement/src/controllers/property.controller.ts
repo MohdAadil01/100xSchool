@@ -6,7 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse";
 
 const create = AsyncHandler(async (req: Request, res: Response) => {
   const parsedBody = createPropertyInputSchema.parse(req.body);
-  const response = await propertyService.create(parsedBody, req.user?.role!);
+  const response = await propertyService.create(parsedBody);
 
   return res
     .status(201)

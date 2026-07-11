@@ -25,15 +25,15 @@ roomTypeRouter.get(
   roomTypeController.getById,
 );
 
-roomTypeRouter.get(
+roomTypeRouter.patch(
   "/:roomTypeId",
   authMiddleware,
   roleMiddleware("superadmin", "admin"),
   roomTypeController.update,
 );
 
-roomTypeRouter.get(
-  "/:roomTypeId",
+roomTypeRouter.patch(
+  "/:roomTypeId/deactivate",
   authMiddleware,
   roleMiddleware("superadmin", "admin"),
   roomTypeController.deactivate,

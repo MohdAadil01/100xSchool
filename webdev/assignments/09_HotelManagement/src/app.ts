@@ -4,6 +4,7 @@ import { errorHandler } from "./middlewares/error.middleware";
 import { authRouter } from "./routes/auth.route";
 import { propertyRouter } from "./routes/property.route";
 import { roomTypeRouter } from "./routes/roomType.route";
+import { roomRouter } from "./routes/room.route";
 
 export const app = express();
 
@@ -13,5 +14,6 @@ app.use(cors({}));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/properties", propertyRouter);
 app.use("/api/v1/roomType", roomTypeRouter);
+app.use("/api/v1/rooms", roomRouter);
 
 app.use(errorHandler);

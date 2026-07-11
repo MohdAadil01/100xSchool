@@ -1,4 +1,4 @@
-import z, { property } from "zod";
+import z from "zod";
 
 export const createRoomTypeInputSchema = z.object({
   code: z.string().min(3, "Atleast 3 characters long."),

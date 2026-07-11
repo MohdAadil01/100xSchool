@@ -32,8 +32,15 @@ export const addRoomTypeInputSchema = z.object({
 export const removeRoomTypeInputSchema = z.object({
   roomType: z.string(),
 });
+export const updateRoomTypePriceInputSchema = z.object({
+  roomType: z.string(),
+  pricePerNight: z.number().nonnegative(),
+});
 
 export type CreateRatePlanInputType = z.infer<typeof createRatePlanInputSchema>;
 export type UpdateRatePlanInputType = z.infer<typeof updateRatePlanInputSchema>;
 export type AddRoomTypeInputType = z.infer<typeof addRoomTypeInputSchema>;
 export type RemoveRoomTypeInputType = z.infer<typeof removeRoomTypeInputSchema>;
+export type UpdateRoomTypePriceInputtype = z.infer<
+  typeof updateRoomTypePriceInputSchema
+>;

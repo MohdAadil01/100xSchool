@@ -160,9 +160,51 @@ const getById = async (id: string) => {
   return reservation;
 };
 
-const checkIn = async (id: string) => {};
+const checkIn = async (id: string) => {
+  const session = await mongoose.startSession();
+  const reservation = await Reservation.findById(id);
+  if (!reservation) throw new AppError(404, "Reservation not found.");
+
+  const availableCleanRoom = await Room.findOne({
+    roomType: reservation.roomType,
+    status: "clean",
+    isActive: true,
+    property: reservation.property,
+  });
+
+  if (!availableCleanRoom) throw new AppError(404, "Room not available.");
+
+  try {
+    const updatedReservation = await Reservation.findOneAndUpdate(
+      {
+        _id: id,
+        status: {
+          $in: ["arrival", "reserved"],
+        },
+      },
+      {
+        room: availableCleanRoom,
+        status: "inhouse",
+      },
+      { new: true, session },
+    );
+
+    await Room.findByIdAndUpdate(
+      availableCleanRoom,
+      { status: "occupied" },
+      { new: true, session },
+    );
+
+    return updatedReservation;
+  } catch (error) {
+    throw new AppError(500, "Unable to assign the room " + error);
+  } finally {
+    await session.endSession();
+  }
+};
 
 const checkOut = async (id: string) => {
+  const today = new Date();
   const session = await mongoose.startSession();
   try {
     await session.withTransaction(async () => {
@@ -178,6 +220,7 @@ const checkOut = async (id: string) => {
         reservation.room,
         {
           status: "dirty",
+          checkOut: today,
         },
         {
           new: true,
@@ -197,7 +240,7 @@ const cancel = async (id: string) => {
   const reservation = await Reservation.findOneAndUpdate(
     {
       _id: id,
-      status: { $in: ["departed", "cancelled", "inhouse", "noshow"] },
+      status: { $in: ["reserved"] },
     },
     {
       status: "cancelled",
@@ -210,6 +253,7 @@ const cancel = async (id: string) => {
 
   return reservation;
 };
+
 const noshow = async (id: string) => {
   const reservation = await Reservation.findById(id);
   if (!reservation) throw new AppError(500, "Unable to find the reservation.");
@@ -217,7 +261,7 @@ const noshow = async (id: string) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  if (reservation.checkIn >= today) {
+  if (reservation.checkIn >= today || reservation.status != "arrival") {
     throw new AppError(500, "Can't now show now");
   } else {
     const updatedReservation = Reservation.findByIdAndUpdate(

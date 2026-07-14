@@ -9,6 +9,7 @@ import {
   SearchAvailabilityInputType,
   SearchQueryInputType,
 } from "../validators/reservation.validator";
+import mongoose from "mongoose";
 
 const searchAvailability = async (input: SearchAvailabilityInputType) => {
   const { property, checkIn, checkOut } = input;
@@ -160,14 +161,80 @@ const getById = async (id: string) => {
 };
 
 const checkIn = async (id: string) => {};
+
 const checkOut = async (id: string) => {
-  const reservation = await Reservation.findById(id);
-  if (!reservation) throw new AppError(404, "Reservation not found.");
+  const session = await mongoose.startSession();
+  try {
+    await session.withTransaction(async () => {
+      const reservation = await Reservation.findOneAndUpdate(
+        { _id: id, status: "inhouse" },
+        {
+          status: "departed",
+        },
+        { new: true, session },
+      );
+      if (!reservation) throw new AppError(404, "Reservation not found.");
+      const room = await Room.findByIdAndUpdate(
+        reservation.room,
+        {
+          status: "dirty",
+        },
+        {
+          new: true,
+          session,
+        },
+      );
+    });
+    return "Checkout Successful";
+  } catch (error) {
+    throw new AppError(500, "Error while checking the guest out.");
+  } finally {
+    session.endSession();
+  }
 };
-const cancel = async (id: string) => {};
-const noshow = async (id: string) => {};
+
+const cancel = async (id: string) => {
+  const reservation = await Reservation.findOneAndUpdate(
+    {
+      _id: id,
+      status: { $in: ["departed", "cancelled", "inhouse", "noshow"] },
+    },
+    {
+      status: "cancelled",
+    },
+    { new: true },
+  );
+
+  if (!reservation)
+    throw new AppError(500, "Unable to cancel the reservation.");
+
+  return reservation;
+};
+const noshow = async (id: string) => {
+  const reservation = await Reservation.findById(id);
+  if (!reservation) throw new AppError(500, "Unable to find the reservation.");
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (reservation.checkIn >= today) {
+    throw new AppError(500, "Can't now show now");
+  } else {
+    const updatedReservation = Reservation.findByIdAndUpdate(
+      id,
+      { status: "cancelled" },
+      { new: true },
+    );
+    return updatedReservation;
+  }
+};
 export const reservationService = {
   create,
   searchAvailability,
   getAll,
+  checkOut,
+  noshow,
+  checkIn,
+  getById,
+  cancel,
 };

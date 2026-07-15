@@ -32,7 +32,7 @@ const getAll = AsyncHandler(async (req: Request, res: Response) => {
   const role = req.user?.role;
   const property =
     role === "superadmin"
-      ? (req.query.property as string)
+      ? (req.query.propertyId as string)
       : req.user?.propertyId;
 
   if (!property) throw new AppError(404, "Property Id not found");

@@ -21,7 +21,8 @@ const create = AsyncHandler(async (req: Request, res: Response) => {
 const getAll = AsyncHandler(async (req: Request, res: Response) => {
   const property = req.user?.propertyId;
   const role = req.user?.role;
-  const targetProperty = role === "superadmin" ? req.query.property : property;
+  const targetProperty =
+    role === "superadmin" ? (req.query.propertyId as string) : property;
   if (!targetProperty) throw new AppError(404, "Property id not given");
 
   const response = await ratePlanService.getAll(String(targetProperty));

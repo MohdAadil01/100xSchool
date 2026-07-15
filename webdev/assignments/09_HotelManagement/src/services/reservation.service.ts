@@ -6,7 +6,6 @@ import { generateConfirmationNumber } from "../utils/GenerateConfirmation";
 import {
   CreateReservationInputType,
   SearchAvailabilityInputType,
-  SearchQueryInputType,
 } from "../validators/reservation.validator";
 import mongoose from "mongoose";
 

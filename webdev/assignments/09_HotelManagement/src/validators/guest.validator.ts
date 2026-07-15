@@ -27,7 +27,7 @@ export const updateGuestInputSchema = z.object({
 
 export const searchGuestQueryInputSchema = z.object({
   lastName: z.string().optional(),
-  email: z.email().optional(),
+  email: z.string().optional(),
 });
 
 export type UpdateGuestInputType = z.infer<typeof updateGuestInputSchema>;

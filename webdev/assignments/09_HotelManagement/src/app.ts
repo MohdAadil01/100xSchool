@@ -7,6 +7,7 @@ import { roomTypeRouter } from "./routes/roomType.route";
 import { roomRouter } from "./routes/room.route";
 import { ratePlanRouter } from "./routes/ratePlan.route";
 import { reservationRouter } from "./routes/reservation.route";
+import { guestRouter } from "./routes/guest.route";
 
 export const app = express();
 
@@ -15,8 +16,9 @@ app.use(cors({}));
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/properties", propertyRouter);
-app.use("/api/v1/roomType", roomTypeRouter);
+app.use("/api/v1/room-types", roomTypeRouter);
+app.use("/api/v1/guests", guestRouter);
 app.use("/api/v1/rooms", roomRouter);
-app.use("/api/v1/rate-plan", ratePlanRouter);
+app.use("/api/v1/rate-plans", ratePlanRouter);
 app.use("/api/v1/reservations", reservationRouter);
 app.use(errorHandler);

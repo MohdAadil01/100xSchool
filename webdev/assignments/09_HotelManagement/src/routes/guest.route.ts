@@ -2,37 +2,37 @@ import { Router } from "express";
 import { authMiddleware, roleMiddleware } from "../middlewares/auth.middleware";
 import { guestController } from "../controllers/guest.controller";
 
-export const guestRoute = Router();
+export const guestRouter = Router();
 
-guestRoute.post(
+guestRouter.post(
   "/",
   authMiddleware,
   roleMiddleware("superadmin", "admin", "frontdesk"),
   guestController.create,
 );
 
-guestRoute.get(
+guestRouter.get(
   "/",
   authMiddleware,
   roleMiddleware("superadmin", "admin", "frontdesk"),
   guestController.getAll,
 );
 
-guestRoute.get(
+guestRouter.get(
   "/search",
   authMiddleware,
   roleMiddleware("superadmin", "admin", "frontdesk"),
   guestController.search,
 );
 
-guestRoute.get(
+guestRouter.get(
   "/:guestId",
   authMiddleware,
   roleMiddleware("superadmin", "admin", "frontdesk"),
   guestController.getById,
 );
 
-guestRoute.patch(
+guestRouter.patch(
   "/:guestId",
   authMiddleware,
   roleMiddleware("superadmin", "admin", "frontdesk"),

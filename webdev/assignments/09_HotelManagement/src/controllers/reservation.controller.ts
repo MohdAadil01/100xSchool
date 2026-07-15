@@ -11,10 +11,7 @@ import { AppError } from "../utils/AppError";
 const create = AsyncHandler(async (req: Request, res: Response) => {
   const parsedBody = createReservationInputSchema.parse(req.body);
 
-  const response = await reservationService.create(
-    parsedBody,
-    String(req.user?.id),
-  );
+  const response = await reservationService.create(parsedBody, req.user!.id);
 
   return res
     .status(201)
@@ -30,6 +27,7 @@ const searchAvailability = AsyncHandler(async (req: Request, res: Response) => {
 
 const getAll = AsyncHandler(async (req: Request, res: Response) => {
   const role = req.user?.role;
+  const status = req.query.status as string | undefined;
   const property =
     role === "superadmin"
       ? (req.query.propertyId as string)
@@ -37,10 +35,7 @@ const getAll = AsyncHandler(async (req: Request, res: Response) => {
 
   if (!property) throw new AppError(404, "Property Id not found");
 
-  const response = await reservationService.getAll(
-    property,
-    String(req.query.status),
-  );
+  const response = await reservationService.getAll(property, status);
 
   return res
     .status(200)
@@ -50,35 +45,35 @@ const getAll = AsyncHandler(async (req: Request, res: Response) => {
 const checkOut = AsyncHandler(async (req: Request, res: Response) => {
   const { reservationId } = req.params;
 
-  const response = await reservationService.checkOut(String(reservationId));
+  const response = await reservationService.checkOut(reservationId as string);
   return res.status(200).json(ApiResponse.ok(200, response, "Checked out"));
 });
 
 const noshow = AsyncHandler(async (req: Request, res: Response) => {
   const { reservationId } = req.params;
 
-  const response = await reservationService.noshow(String(reservationId));
+  const response = await reservationService.noshow(reservationId as string);
   return res.status(200).json(ApiResponse.ok(200, response, "No Show marked"));
 });
 
 const checkIn = AsyncHandler(async (req: Request, res: Response) => {
   const { reservationId } = req.params;
 
-  const response = await reservationService.checkIn(String(reservationId));
+  const response = await reservationService.checkIn(reservationId as string);
   return res.status(200).json(ApiResponse.ok(200, response, "Checked in"));
 });
 
 const getById = AsyncHandler(async (req: Request, res: Response) => {
   const { reservationId } = req.params;
 
-  const response = await reservationService.getById(String(reservationId));
+  const response = await reservationService.getById(reservationId as string);
   return res.status(200).json(ApiResponse.ok(200, response, "Get by id"));
 });
 
 const cancel = AsyncHandler(async (req: Request, res: Response) => {
   const { reservationId } = req.params;
 
-  const response = await reservationService.cancel(String(reservationId));
+  const response = await reservationService.cancel(reservationId as string);
   return res.status(200).json(ApiResponse.ok(200, response, "Cancelled"));
 });
 

@@ -31,7 +31,7 @@ const getAll = AsyncHandler(async (req: Request, res: Response) => {
 
 const getById = AsyncHandler(async (req: Request, res: Response) => {
   const { ratePlanId } = req.params;
-  const response = await ratePlanService.getById(String(ratePlanId));
+  const response = await ratePlanService.getById(ratePlanId as string);
 
   return res.status(200).json(ApiResponse.ok(200, response, "Fetched by id"));
 });
@@ -39,7 +39,10 @@ const getById = AsyncHandler(async (req: Request, res: Response) => {
 const update = AsyncHandler(async (req: Request, res: Response) => {
   const { ratePlanId } = req.params;
   const parsedBody = updateRatePlanInputSchema.parse(req.body);
-  const response = await ratePlanService.update(String(ratePlanId), parsedBody);
+  const response = await ratePlanService.update(
+    ratePlanId as string,
+    parsedBody,
+  );
 
   return res
     .status(200)
@@ -50,7 +53,7 @@ const addRoomType = AsyncHandler(async (req: Request, res: Response) => {
   const { ratePlanId } = req.params;
   const parsedBody = addRoomTypeInputSchema.parse(req.body);
   const response = await ratePlanService.addRoomType(
-    String(ratePlanId),
+    ratePlanId as string,
     parsedBody,
   );
 
@@ -61,7 +64,7 @@ const removeRoomType = AsyncHandler(async (req: Request, res: Response) => {
   const { ratePlanId } = req.params;
   const parsedBody = removeRoomTypeInputSchema.parse(req.body);
   const response = await ratePlanService.removeRoomType(
-    String(ratePlanId),
+    ratePlanId as string,
     parsedBody,
   );
 
@@ -72,7 +75,7 @@ const removeRoomType = AsyncHandler(async (req: Request, res: Response) => {
 
 const deactivate = AsyncHandler(async (req: Request, res: Response) => {
   const { ratePlanId } = req.params;
-  const response = await ratePlanService.deactivate(String(ratePlanId));
+  const response = await ratePlanService.deactivate(ratePlanId as string);
 
   return res
     .status(200)
@@ -84,7 +87,7 @@ const updateRoomTypePrice = AsyncHandler(
     const { ratePlanId } = req.params;
     const parsedBody = updateRoomTypePriceInputSchema.parse(req.body);
     const response = await ratePlanService.updateRoomTypePrice(
-      String(ratePlanId),
+      ratePlanId as string,
       parsedBody,
     );
 

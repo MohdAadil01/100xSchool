@@ -24,7 +24,7 @@ const getAll = AsyncHandler(async (req: Request, res: Response) => {
 
   if (!targetProperty) throw new AppError(400, "Property ID is required");
 
-  const response = await roomService.getAll(String(targetProperty));
+  const response = await roomService.getAll(targetProperty);
 
   return res
     .status(200)
@@ -33,7 +33,7 @@ const getAll = AsyncHandler(async (req: Request, res: Response) => {
 
 const getById = AsyncHandler(async (req: Request, res: Response) => {
   const { roomId } = req.params;
-  const response = await roomService.getById(String(roomId));
+  const response = await roomService.getById(roomId as string);
   return res
     .status(200)
     .json(ApiResponse.ok(200, response, "Fetched rooms for this id"));
@@ -42,20 +42,20 @@ const getById = AsyncHandler(async (req: Request, res: Response) => {
 const update = AsyncHandler(async (req: Request, res: Response) => {
   const parsedBody = updateRoomInputSchema.parse(req.body);
   const { roomId } = req.params;
-  const response = await roomService.update(String(roomId), parsedBody);
+  const response = await roomService.update(roomId as string, parsedBody);
   return res.status(200).json(ApiResponse.ok(200, response, "Updated"));
 });
 const updateStatus = AsyncHandler(async (req: Request, res: Response) => {
   const parsedBody = updateRoomStatusInputSchema.parse(req.body);
   const { roomId } = req.params;
-  const response = await roomService.updateStatus(String(roomId), parsedBody);
+  const response = await roomService.updateStatus(roomId as string, parsedBody);
   return res
     .status(200)
     .json(ApiResponse.ok(200, response, "Updated room status"));
 });
 const deactivate = AsyncHandler(async (req: Request, res: Response) => {
   const { roomId } = req.params;
-  const response = await roomService.deactivate(String(roomId));
+  const response = await roomService.deactivate(roomId as string);
   return res.status(200).json(ApiResponse.ok(200, response, "Deactivated"));
 });
 

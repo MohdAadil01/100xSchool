@@ -34,7 +34,7 @@ const getAll = AsyncHandler(async (req: Request, res: Response) => {
 const getById = AsyncHandler(async (req: Request, res: Response) => {
   const { roomTypeId } = req.params;
 
-  const response = await roomTypeService.getById(String(roomTypeId));
+  const response = await roomTypeService.getById(roomTypeId as string);
 
   return res.status(200).json(ApiResponse.ok(200, response, "Room Type"));
 });
@@ -42,7 +42,10 @@ const getById = AsyncHandler(async (req: Request, res: Response) => {
 const update = AsyncHandler(async (req: Request, res: Response) => {
   const { roomTypeId } = req.params;
   const parsedBody = updateRoomTypeInputSchema.parse(req.body);
-  const response = await roomTypeService.update(parsedBody, String(roomTypeId));
+  const response = await roomTypeService.update(
+    parsedBody,
+    roomTypeId as string,
+  );
 
   return res
     .status(200)
@@ -52,7 +55,7 @@ const update = AsyncHandler(async (req: Request, res: Response) => {
 const deactivate = AsyncHandler(async (req: Request, res: Response) => {
   const { roomTypeId } = req.params;
 
-  const response = await roomTypeService.deactivate(String(roomTypeId));
+  const response = await roomTypeService.deactivate(roomTypeId as string);
 
   return res
     .status(200)

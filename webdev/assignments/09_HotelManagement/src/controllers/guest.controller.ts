@@ -26,7 +26,7 @@ const getAll = AsyncHandler(async (req: Request, res: Response) => {
     role === "superadmin" ? (req.query.propertyId as string) : property;
   if (!targetProperty) throw new AppError(404, "Property id not found.");
 
-  const response = await guestService.getAll(String(targetProperty));
+  const response = await guestService.getAll(targetProperty);
   return res
     .status(200)
     .json(ApiResponse.ok(200, response, "Fetched all guests."));
@@ -34,7 +34,7 @@ const getAll = AsyncHandler(async (req: Request, res: Response) => {
 
 const getById = AsyncHandler(async (req: Request, res: Response) => {
   const { guestId } = req.params;
-  const response = await guestService.getById(String(guestId));
+  const response = await guestService.getById(guestId as string);
 
   return res.status(200).json(ApiResponse.ok(200, response, "Get By id"));
 });
@@ -42,7 +42,7 @@ const getById = AsyncHandler(async (req: Request, res: Response) => {
 const update = AsyncHandler(async (req: Request, res: Response) => {
   const { guestId } = req.params;
   const parsedBody = updateGuestInputSchema.parse(req.body);
-  const response = await guestService.update(String(guestId), parsedBody);
+  const response = await guestService.update(guestId as string, parsedBody);
 
   return res
     .status(200)

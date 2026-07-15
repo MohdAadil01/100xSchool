@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError } from "../utils/AppError";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { ENV } from "../config/env";
 
 export const authMiddleware = (
   req: Request,
@@ -8,15 +9,14 @@ export const authMiddleware = (
   next: NextFunction,
 ) => {
   try {
-    if (!process.env.JWT_SECRET)
-      throw new AppError(500, "JWT secret key not found.");
+    if (!ENV.JWT_SECRET) throw new AppError(500, "JWT secret key not found.");
     const authHeader = req.headers.authorization;
     if (!authHeader) throw new AppError(401, "Unauthorized");
 
     const token = authHeader.split(" ")[1];
     if (!token) throw new AppError(401, "Token missing");
 
-    const data = jwt.verify(token, process.env.JWT_SECRET) as {
+    const data = jwt.verify(token, ENV.JWT_SECRET) as {
       id: string;
       role: string;
       propertyId: string;
@@ -37,7 +37,7 @@ export const roleMiddleware = (...data: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       const role = req.user?.role;
-      if (!data.includes(String(role)))
+      if (!data.includes(role!))
         throw new AppError(403, "Forbidden — you don't have permission");
 
       next();

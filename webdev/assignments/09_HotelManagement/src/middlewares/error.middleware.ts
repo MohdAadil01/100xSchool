@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { AppError } from "../utils/AppError";
 import { ApiResponse } from "../utils/ApiResponse";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 export const errorHandler = (
   err: Error,
@@ -17,6 +18,9 @@ export const errorHandler = (
     return res
       .status(err.statusCode)
       .json(ApiResponse.fail(err.statusCode, err.message));
+  }
+  if (err instanceof JsonWebTokenError) {
+    return res.status(500).json(ApiResponse.fail(500, err.message));
   }
 
   console.log(err);

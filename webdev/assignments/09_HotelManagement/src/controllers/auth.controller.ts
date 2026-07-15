@@ -21,7 +21,14 @@ const login = AsyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json(ApiResponse.ok(200, response, "Logged in"));
 });
 
+const me = AsyncHandler(async (req: Request, res: Response) => {
+  const id = req.user?.id;
+  const response = await authService.me(id!);
+  return res.status(200).json(ApiResponse.ok(200, response, "Get me"));
+});
+
 export const authController = {
   register,
   login,
+  me,
 };

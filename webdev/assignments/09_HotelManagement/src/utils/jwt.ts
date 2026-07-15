@@ -11,7 +11,7 @@ export const generateToken = (input: {
       throw new AppError(404, "Jwt secret not found");
 
     const token = jwt.sign(input, process.env.JWT_SECRET, {
-      expiresIn: "10",
+      expiresIn: "10d",
     });
     return token;
   } catch (error) {

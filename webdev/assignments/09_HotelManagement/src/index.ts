@@ -1,10 +1,10 @@
+import "dotenv/config";
+
 import { app } from "./app";
-import { config } from "dotenv";
 import { connectDb } from "./config/db";
+import { ENV } from "./config/env";
 
-config();
-
-const PORT = process.env.PORT || 9090;
+const PORT = ENV.PORT || 9090;
 
 const start = async () => {
   await connectDb();

@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import { AppError } from "../utils/AppError";
-import { config } from "dotenv";
 
-config();
-const MONGO_URI = process.env.MONGO_URI;
+import { ENV } from "./env";
+
+const MONGO_URI = ENV.MONGO_URI;
 
 export const connectDb = async () => {
   if (!MONGO_URI) throw new AppError(404, "Mongo Url not found.");

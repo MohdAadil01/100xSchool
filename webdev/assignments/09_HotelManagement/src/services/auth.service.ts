@@ -7,6 +7,7 @@ import {
   RegisterInputType,
 } from "../validators/auth.validator";
 import { generateToken } from "../utils/jwt";
+import { ENV } from "../config/env";
 
 const register = async (input: RegisterInputType) => {
   const {
@@ -27,10 +28,7 @@ const register = async (input: RegisterInputType) => {
   if (role !== "superadmin" && !property)
     throw new AppError(400, "Property is required for this role");
 
-  const hashedPassword = await bcrypt.hash(
-    password,
-    Number(process.env.SALT) || 10,
-  );
+  const hashedPassword = await bcrypt.hash(password, Number(ENV.SALT) || 10);
 
   const user = await User.create({
     firstName,
@@ -72,7 +70,16 @@ const login = async (input: LoginInputType) => {
   return { userWithoutPassword, token };
 };
 
+const me = async (id: string) => {
+  if (!id) throw new AppError(404, "Id not given");
+  const existingUser = await User.findById(id);
+
+  if (!existingUser) throw new AppError(404, "User not found with this id");
+  return existingUser;
+};
+
 export const authService = {
   register,
   login,
+  me,
 };

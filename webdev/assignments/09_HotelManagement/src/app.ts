@@ -6,6 +6,7 @@ import { propertyRouter } from "./routes/property.route";
 import { roomTypeRouter } from "./routes/roomType.route";
 import { roomRouter } from "./routes/room.route";
 import { ratePlanRouter } from "./routes/ratePlan.route";
+import { reservationRouter } from "./routes/reservation.route";
 
 export const app = express();
 
@@ -17,5 +18,5 @@ app.use("/api/v1/properties", propertyRouter);
 app.use("/api/v1/roomType", roomTypeRouter);
 app.use("/api/v1/rooms", roomRouter);
 app.use("/api/v1/rate-plan", ratePlanRouter);
-
+app.use("/api/v1/reservations", reservationRouter);
 app.use(errorHandler);

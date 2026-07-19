@@ -1,8 +1,16 @@
+import { Guest } from "../models/Guest.model";
+import { Property } from "../models/Property.model";
 import { RatePlan } from "../models/RatePlan.model";
 import { Reservation } from "../models/Reservation.model";
 import { Room } from "../models/Room.model";
+import { RoomType } from "../models/RoomType.model";
 import { AppError } from "../utils/AppError";
+import {
+  checkoutSummaryEmailTemplate,
+  reservationConfirmationEmailTemplate,
+} from "../utils/emailTemplates";
 import { generateConfirmationNumber } from "../utils/GenerateConfirmation";
+import { sendMail } from "../utils/mailer";
 import {
   CreateReservationInputType,
   SearchAvailabilityInputType,
@@ -118,6 +126,38 @@ const create = async (input: CreateReservationInputType, createdBy: string) => {
     createdBy,
   });
 
+  const guestDetails = await Guest.findById(guest);
+  const propertyDetails = await Property.findById(property);
+  const roomTypeDoc = await RoomType.findById(roomType);
+  const ratePlanDoc = await RatePlan.findById(ratePlan);
+
+  if (!guestDetails || !propertyDetails || !roomTypeDoc || !ratePlanDoc)
+    throw new AppError(404, "Details not found");
+
+  const emailTemplate = reservationConfirmationEmailTemplate({
+    guestName: `${guestDetails.firstName} ${guestDetails.lastName}`,
+    confirmationNo,
+    hotelName: propertyDetails.name || "",
+    hotelAddress: propertyDetails.address || "",
+    hotelPhone: propertyDetails.phone || "",
+    hotelEmail: propertyDetails.email || "",
+    checkIn,
+    checkOut,
+    nights,
+    roomTypeName: roomTypeDoc.name || "",
+    ratePlanName: ratePlanDoc.name || "",
+    pricePerNight,
+    totalAmount,
+    specialRequests,
+  });
+  if (guestDetails.email) {
+    await sendMail(
+      guestDetails?.email,
+      `Booking Confirmed - ${confirmationNo}`,
+      emailTemplate,
+    );
+  }
+
   return reservation;
 };
 
@@ -207,11 +247,12 @@ const checkIn = async (id: string) => {
 };
 
 const checkOut = async (id: string) => {
-  const today = new Date();
+  let reservation: any;
+  let room: any;
   const session = await mongoose.startSession();
   try {
     await session.withTransaction(async () => {
-      const reservation = await Reservation.findOneAndUpdate(
+      reservation = await Reservation.findOneAndUpdate(
         { _id: id, status: "inhouse" },
         {
           status: "departed",
@@ -219,7 +260,7 @@ const checkOut = async (id: string) => {
         { new: true, session },
       );
       if (!reservation) throw new AppError(404, "Reservation not found.");
-      const room = await Room.findByIdAndUpdate(
+      room = await Room.findByIdAndUpdate(
         reservation.room,
         {
           $set: {
@@ -232,6 +273,33 @@ const checkOut = async (id: string) => {
         },
       );
     });
+
+    if (reservation) {
+      const guestDetails = await Guest.findById(reservation.guest);
+      const propertyDetails = await Property.findById(reservation.property);
+      const roomTypeDoc = await RoomType.findById(reservation.roomType);
+
+      const emailTemplate = checkoutSummaryEmailTemplate({
+        guestName: `${guestDetails?.firstName} ${guestDetails?.lastName}`,
+        confirmationNo: reservation.confirmationNo,
+        hotelName: propertyDetails?.name || "",
+        hotelEmail: propertyDetails?.email || "",
+        checkIn: reservation.checkIn,
+        checkOut: reservation.checkOut,
+        nights: reservation.nights,
+        roomNumber: room?.roomNumber || "",
+        roomTypeName: roomTypeDoc?.name || "",
+        pricePerNight: reservation.pricePerNight,
+        totalAmount: reservation.totalAmount,
+      });
+
+      await sendMail(
+        guestDetails?.email!,
+        `Checkout Summary — ${reservation.confirmationNo}`,
+        emailTemplate,
+      );
+    }
+
     return "Checkout Successful";
   } catch (error) {
     throw new AppError(500, "Error while checking the guest out.");

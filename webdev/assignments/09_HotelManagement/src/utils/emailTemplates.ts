@@ -1,4 +1,4 @@
-export const reservationConfirmationEmail = (data: {
+export const reservationConfirmationEmailTemplate = (data: {
   guestName: string;
   confirmationNo: string;
   hotelName: string;
@@ -222,7 +222,7 @@ export const reservationConfirmationEmail = (data: {
   `;
 };
 
-export const checkoutSummaryEmail = (data: {
+export const checkoutSummaryEmailTemplate = (data: {
   guestName: string;
   confirmationNo: string;
   hotelName: string;

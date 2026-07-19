@@ -55,7 +55,7 @@ const getTodayArrivals = async (propertyId: string) => {
     },
     {
       $lookup: {
-        from: "Guests",
+        from: "guests",
         localField: "guest",
         foreignField: "_id",
         as: "guestDetails",
@@ -92,7 +92,7 @@ const getMonthlyRevenue = async (propertyId: string) => {
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
 
-  const revenue = Reservation.aggregate([
+  const revenue = await Reservation.aggregate([
     {
       $match: {
         property: new mongoose.Types.ObjectId(propertyId),
@@ -116,7 +116,7 @@ const getMonthlyRevenue = async (propertyId: string) => {
     },
   ]);
 
-  return revenue;
+  return revenue[0] || { totalRevenue: 0, totalReservations: 0 };
 };
 
 export const reportService = {

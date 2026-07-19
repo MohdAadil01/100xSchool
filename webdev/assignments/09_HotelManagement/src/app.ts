@@ -8,6 +8,7 @@ import { roomRouter } from "./routes/room.route";
 import { ratePlanRouter } from "./routes/ratePlan.route";
 import { reservationRouter } from "./routes/reservation.route";
 import { guestRouter } from "./routes/guest.route";
+import { reportRouter } from "./routes/reports.route";
 
 export const app = express();
 
@@ -21,4 +22,5 @@ app.use("/api/v1/guests", guestRouter);
 app.use("/api/v1/rooms", roomRouter);
 app.use("/api/v1/rate-plans", ratePlanRouter);
 app.use("/api/v1/reservations", reservationRouter);
+app.use("/api/v1/reports", reportRouter);
 app.use(errorHandler);

@@ -6,5 +6,10 @@ export const ENV = z
     MONGO_URI: z.string().url(),
     SALT: z.coerce.number().default(10),
     PORT: z.coerce.number().default(9000),
+    EMAIL_HOST: z.string(),
+    EMAIL_PORT: z.coerce.number().default(587),
+    EMAIL_USER: z.string(),
+    EMAIL_PASS: z.string(),
+    EMAIL_FROM_NAME: z.string(),
   })
   .parse(process.env);

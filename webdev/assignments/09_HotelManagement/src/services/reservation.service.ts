@@ -11,6 +11,7 @@ import {
 } from "../utils/emailTemplates";
 import { generateConfirmationNumber } from "../utils/GenerateConfirmation";
 import { sendMail } from "../utils/mailer";
+import { redis } from "../utils/redis";
 import {
   CreateReservationInputType,
   SearchAvailabilityInputType,
@@ -19,6 +20,11 @@ import mongoose from "mongoose";
 
 const searchAvailability = async (input: SearchAvailabilityInputType) => {
   const { property, checkIn, checkOut } = input;
+
+  const redisKey = `availability:${property}:${checkIn.toISOString().split("T")[0]}:${checkOut.toISOString().split("T")[0]}`;
+
+  const cachedAvailability = await redis.get(redisKey);
+  if (cachedAvailability) return JSON.parse(cachedAvailability);
 
   // !finding already booked  rooms
   const alreadyBookedRoomsId = await Reservation.find({
@@ -45,6 +51,8 @@ const searchAvailability = async (input: SearchAvailabilityInputType) => {
     isActive: true,
     "roomTypes.roomType": { $in: availableRoomTypeIds },
   });
+
+  await redis.set(redisKey, JSON.stringify(ratePlans), "EX", 300);
 
   return ratePlans;
 };
@@ -125,6 +133,10 @@ const create = async (input: CreateReservationInputType, createdBy: string) => {
     source,
     createdBy,
   });
+
+  await redis.del(
+    `availability:${property}:${checkIn.toISOString().split("T")[0]}:${checkOut.toISOString().split("T")[0]}`,
+  );
 
   const guestDetails = await Guest.findById(guest);
   const propertyDetails = await Property.findById(property);

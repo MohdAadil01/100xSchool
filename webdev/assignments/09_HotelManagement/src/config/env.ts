@@ -11,5 +11,7 @@ export const ENV = z
     EMAIL_USER: z.string(),
     EMAIL_PASS: z.string(),
     EMAIL_FROM_NAME: z.string(),
+    REDIS_HOST: z.string().default("localhost"),
+    REDIS_PORT: z.coerce.number().default(6379),
   })
   .parse(process.env);

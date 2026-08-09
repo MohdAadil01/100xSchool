@@ -10,7 +10,7 @@ export const rateLimit = async (
   try {
     const ip = req.ip;
     const rediskey = `ratelimit:login:${ip}`;
-    const MAX_ATTEMPTS = 5;
+    const MAX_ATTEMPTS = 15;
     const WINDOW = 900;
 
     const count = await redis.incr(rediskey);

@@ -1,8 +1,10 @@
 import z from "zod";
 
 export const registerInputSchema = z.object({
-  firstName: z.string().min(2, "Atleast 2 characters long"),
-  lastName: z.string().min(2, "Atleast 2 characters long"),
+  firstName: z
+    .string()
+    .min(2, "First Name should be atleast 2 characters long"),
+  lastName: z.string().min(2, "Last Name should be atleast 2 characters long"),
   email: z.email(),
   password: z.string().min(6, "Password should be atleast 6 characters long."),
   phone: z.string(),

@@ -1,17 +1,7 @@
 // src/types/express.d.ts
-import "express";
+// import "express";
 
-declare module "express-serve-static-core" {
-  interface Request {
-    user?: {
-      id: string;
-      role: string;
-      propertyId: string | null;
-    };
-  }
-}
-
-// declare namespace Express {
+// declare module "express-serve-static-core" {
 //   interface Request {
 //     user?: {
 //       id: string;
@@ -20,5 +10,15 @@ declare module "express-serve-static-core" {
 //     };
 //   }
 // }
+
+declare namespace Express {
+  interface Request {
+    user?: {
+      id: string;
+      role: string;
+      propertyId: string | null;
+    };
+  }
+}
 
 // // declre merging

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError } from "../utils/AppError";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { ENV } from "../config/env";
 
 export const authMiddleware = (
@@ -10,10 +10,11 @@ export const authMiddleware = (
 ) => {
   try {
     if (!ENV.JWT_SECRET) throw new AppError(500, "JWT secret key not found.");
-    const authHeader = req.headers.authorization;
-    if (!authHeader) throw new AppError(401, "Unauthorized");
+    // const authHeader = req.headers.authorization;
+    // if (!authHeader) throw new AppError(401, "Unauthorized");
 
-    const token = authHeader.split(" ")[1];
+    // const token = authHeader.split(" ")[1];
+    const token = req.cookies.token;
     if (!token) throw new AppError(401, "Token missing");
 
     const data = jwt.verify(token, ENV.JWT_SECRET) as {

@@ -8,6 +8,7 @@ import {
 } from "../validators/auth.validator";
 import { generateToken } from "../utils/jwt";
 import { ENV } from "../config/env";
+import { Property } from "../models/Property.model";
 
 const register = async (input: RegisterInputType) => {
   const {
@@ -21,14 +22,18 @@ const register = async (input: RegisterInputType) => {
     address,
   } = input;
 
-  const existingUser = await User.findOne({ email });
-  if (existingUser)
-    throw new AppError(400, "User with this email already exists.");
+  const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
+  if (existingUser) throw new AppError(409, "User already exists.");
 
   if (role !== "superadmin" && !property)
     throw new AppError(400, "Property is required for this role");
 
   const hashedPassword = await bcrypt.hash(password, Number(ENV.SALT) || 10);
+
+  if (property) {
+    const propertyExist = await Property.findById(property);
+    if (!propertyExist) throw new AppError(404, "Property doesn't exists.");
+  }
 
   const user = await User.create({
     firstName,

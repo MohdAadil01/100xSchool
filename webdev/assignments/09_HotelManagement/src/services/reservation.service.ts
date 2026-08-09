@@ -5,6 +5,7 @@ import { Reservation } from "../models/Reservation.model";
 import { Room } from "../models/Room.model";
 import { RoomType } from "../models/RoomType.model";
 import { AppError } from "../utils/AppError";
+import { calculateNights } from "../utils/calculateNights";
 import {
   checkoutSummaryEmailTemplate,
   reservationConfirmationEmailTemplate,
@@ -108,9 +109,8 @@ const create = async (input: CreateReservationInputType, createdBy: string) => {
       "No rooms available for this room type on selected dates",
     );
 
-  const nights = Math.ceil(
-    (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24),
-  );
+  const nights = calculateNights(checkIn, checkOut);
+
   const pricePerNight = roomTypeEntry.pricePerNight;
   const totalAmount = nights * pricePerNight;
 

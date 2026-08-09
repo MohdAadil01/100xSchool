@@ -9,16 +9,32 @@ import { ApiResponse } from "../utils/ApiResponse";
 
 const register = AsyncHandler(async (req: Request, res: Response) => {
   const parsedBody = registerInputSchema.parse(req.body);
-  const response = await authService.register(parsedBody);
+  const { userWithoutPassword: user, token } =
+    await authService.register(parsedBody);
 
-  return res.status(201).json(ApiResponse.ok(201, response, "Registered"));
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    maxAge: 10 * 24 * 60 * 60 * 1000,
+  });
+
+  return res.status(201).json(ApiResponse.ok(201, { user }, "Registered"));
 });
 
 const login = AsyncHandler(async (req: Request, res: Response) => {
   const parsedBody = loginInputSchema.parse(req.body);
-  const response = await authService.login(parsedBody);
+  const { userWithoutPassword: user, token } =
+    await authService.login(parsedBody);
 
-  return res.status(200).json(ApiResponse.ok(200, response, "Logged in"));
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    maxAge: 10 * 24 * 60 * 60 * 1000,
+  });
+
+  return res.status(200).json(ApiResponse.ok(200, { user }, "Logged in"));
 });
 
 const me = AsyncHandler(async (req: Request, res: Response) => {
@@ -27,8 +43,18 @@ const me = AsyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json(ApiResponse.ok(200, response, "Get me"));
 });
 
+const logout = AsyncHandler(async (req: Request, res: Response) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  });
+  res.status(200).json(ApiResponse.ok(200, null, "Logged Out"));
+});
+
 export const authController = {
   register,
   login,
   me,
+  logout,
 };

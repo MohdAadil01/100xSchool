@@ -9,6 +9,8 @@ import { Register } from "./pages/auth/Register";
 import Layout from "./pages/Layout/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
+import Reservations from "./pages/reservations/Reservations";
+import NewReservation from "./pages/reservations/NewReservation";
 
 let router = createBrowserRouter([
   {
@@ -37,6 +39,14 @@ let router = createBrowserRouter([
           {
             path: "/dashboard",
             element: <Dashboard />,
+          },
+          {
+            path: "/reservations",
+            element: <Reservations />,
+          },
+          {
+            path: "/reservations/new",
+            element: <NewReservation />,
           },
         ],
       },

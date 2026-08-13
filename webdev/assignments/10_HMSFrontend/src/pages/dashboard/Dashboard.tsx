@@ -1,14 +1,40 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useReservations } from "../../hooks/useReservations";
+import { api } from "../../api/axios";
+import { useEffect } from "react";
+
+interface Reservation {
+  _id: string;
+  confirmationNo: string;
+  checkIn: string;
+  checkOut: string;
+  nights: number;
+  status: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+}
 
 const Dashboard = () => {
   const { data: arrivals = [], isLoading: arrivalsLoading } =
-    useReservations("arrivals");
+    useReservations("arrival");
 
   const { data: inhouse = [], isLoading: inhouseLoading } =
     useReservations("inhouse");
 
   const { data: reserved = [], isLoading: reservedLoading } =
     useReservations("reserved");
+
+  const queryClient = useQueryClient();
+
+  const { mutate: checkIn, isPending } = useMutation({
+    mutationFn: async (reservationId: string) => {
+      return await api.patch(`/reservations/${reservationId}/checkin`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reservations"] });
+    },
+  });
 
   if (arrivalsLoading || inhouseLoading || reservedLoading) {
     return <div className="p-6">Loading...</div>;
@@ -42,7 +68,7 @@ const Dashboard = () => {
 
         <div className="divide-y">
           {arrivals.length > 0 ? (
-            arrivals.map((arrival: any) => (
+            arrivals.map((arrival: Reservation) => (
               <div
                 key={arrival.confirmationNo}
                 className="flex items-center justify-between p-4"
@@ -56,7 +82,11 @@ const Dashboard = () => {
                   </p>
                 </div>
 
-                <button className="rounded-md border px-3 py-1.5 text-sm">
+                <button
+                  className="rounded-md border px-3 py-1.5 text-sm"
+                  onClick={() => checkIn(arrival._id)}
+                  disabled={isPending}
+                >
                   Check In
                 </button>
               </div>

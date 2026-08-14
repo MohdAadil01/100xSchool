@@ -12,7 +12,10 @@ export const errorHandler = (
 ) => {
   if (err instanceof ZodError) {
     const issue = err.issues[0];
-    return res.status(400).json(ApiResponse.fail(400, issue.message));
+    const path = issue.path[0];
+    return res
+      .status(400)
+      .json(ApiResponse.fail(400, `${String(path)} - ${issue.message}`));
   }
   if (err instanceof AppError) {
     return res

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "seed": "ts-node src/seed.ts",
     "dev2": "nodemon",
     "dev": "tsc -b && node dist/index.js",
     "build": "tsc",

@@ -51,7 +51,7 @@ const searchAvailability = async (input: SearchAvailabilityInputType) => {
     endDate: { $gte: checkOut },
     isActive: true,
     "roomTypes.roomType": { $in: availableRoomTypeIds },
-  });
+  }).populate("roomTypes.roomType", "code name");
 
   await redis.set(redisKey, JSON.stringify(ratePlans), "EX", 300);
 
@@ -116,6 +116,12 @@ const create = async (input: CreateReservationInputType, createdBy: string) => {
 
   const confirmationNo = await generateConfirmationNumber();
 
+  const checkInDate = new Date(checkIn);
+  checkInDate.setHours(0, 0, 0, 0);
+
+  const status =
+    checkInDate.getTime() === today.getTime() ? "arrival" : "reserved";
+
   const reservation = await Reservation.create({
     guest,
     property,
@@ -131,6 +137,7 @@ const create = async (input: CreateReservationInputType, createdBy: string) => {
     specialRequests,
     confirmationNo,
     source,
+    status,
     createdBy,
   });
 

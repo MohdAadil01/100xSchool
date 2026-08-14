@@ -35,7 +35,7 @@ interface Guest {
 function NewReservation() {
   const today = new Date();
   const defaultCheckOut = new Date();
-  defaultCheckOut.setDate(today.getDate() + 30);
+  defaultCheckOut.setDate(today.getDate() + 1);
 
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
@@ -52,6 +52,7 @@ function NewReservation() {
   const [search, setSearch] = useState({ lastName: "", email: "" });
   const [guest, setGuest] = useState<Guest | null>(null);
   const [guestModalOpen, setGuestModalOpen] = useState(false);
+  const [lastSearch, setLastSearch] = useState<Guest[]>([]);
 
   const [selectedRate, setSelectedRate] = useState({
     ratePlan: "",
@@ -110,10 +111,12 @@ function NewReservation() {
   const openGuestSearch = async (type: "name" | "email") => {
     if (type === "name") {
       if (!search.lastName.trim()) return;
-      await searchByName();
+      const res = await searchByName();
+      setLastSearch(res.data || []);
     } else {
       if (!search.email.trim()) return;
-      await searchByEmail();
+      const res = await searchByEmail();
+      setLastSearch(res.data || []);
     }
 
     setGuestModalOpen(true);
@@ -149,6 +152,7 @@ function NewReservation() {
       queryClient.invalidateQueries({
         queryKey: ["reservations"],
       });
+      navigate("/dashboard");
     },
   });
 
@@ -161,7 +165,11 @@ function NewReservation() {
           Search availability and create a reservation
         </p>
       </div>
-
+      {reservationError && (
+        <p className="text-red-500 text-sm">
+          {reservationError?.response?.data?.error}
+        </p>
+      )}
       {/* Search / Stay Details */}
       <div className="rounded-md border border-gray-300 bg-white">
         <div className="border-b border-gray-300 bg-gray-50 px-4 py-3">
@@ -475,9 +483,9 @@ function NewReservation() {
 
             {/* Modal Body */}
             <div className="max-h-[450px] overflow-y-auto p-4">
-              {(nameResults || emailResults)?.length > 0 ? (
+              {lastSearch?.length > 0 ? (
                 <div className="divide-y divide-gray-200 rounded border border-gray-200">
-                  {(nameResults || emailResults).map((g: Guest) => (
+                  {lastSearch.map((g: Guest) => (
                     <div
                       key={g._id}
                       className="flex items-center justify-between px-4 py-3 hover:bg-gray-50"
@@ -553,7 +561,6 @@ function NewReservation() {
             type="button"
             onClick={() => {
               bookReservation();
-              navigate("/dashboard");
             }}
             className="rounded bg-green-600 px-6 py-2 text-sm font-medium text-white hover:bg-green-700"
           >

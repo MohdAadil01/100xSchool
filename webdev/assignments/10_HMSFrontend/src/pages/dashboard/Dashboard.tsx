@@ -40,6 +40,8 @@ const Dashboard = () => {
     return <div className="p-6">Loading...</div>;
   }
 
+  console.log(arrivals);
+
   return (
     <div className="space-y-6 p-6">
       {/* Summary */}

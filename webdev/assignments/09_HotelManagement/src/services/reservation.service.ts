@@ -184,7 +184,24 @@ const getAll = async (property: string, status?: string) => {
   let query: any = {};
   if (status) query.status = status;
 
-  const reservations = await Reservation.find({ property, ...query });
+  const reservations = await Reservation.find({ property, ...query }).populate([
+    {
+      path: "guest",
+      select: "firstName lastName phone membershipType",
+    },
+    {
+      path: "ratePlan",
+      select: "name code",
+    },
+    {
+      path: "roomType",
+      select: "name code",
+    },
+    {
+      path: "room",
+      select: "roomNumber status",
+    },
+  ]);
 
   return reservations;
 };

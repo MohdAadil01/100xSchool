@@ -18,5 +18,6 @@ export const ENV = z
     REDIS_PORT: z.coerce.number().default(6379),
     REDIS_PASSWORD: z.string(),
     REDIS_URL: z.string(),
+    CLIENT_URL: z.string(),
   })
   .parse(process.env);

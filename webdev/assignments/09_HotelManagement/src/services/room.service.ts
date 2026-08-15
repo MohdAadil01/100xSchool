@@ -23,7 +23,10 @@ const create = async (input: CreateRoomInputType) => {
 };
 
 const getAll = async (property: string) => {
-  const rooms = await Room.find({ property, isActive: true });
+  const rooms = await Room.find({ property, isActive: true }).populate(
+    "roomType",
+    "name",
+  );
   return rooms;
 };
 

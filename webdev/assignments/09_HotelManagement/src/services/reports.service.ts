@@ -62,6 +62,22 @@ const getTodayArrivals = async (propertyId: string) => {
       },
     },
     {
+      $lookup: {
+        from: "roomtypes",
+        localField: "roomType",
+        foreignField: "_id",
+        as: "roomTypeDetails",
+      },
+    },
+    {
+      $lookup: {
+        from: "rooms",
+        localField: "room",
+        foreignField: "_id",
+        as: "roomDetails",
+      },
+    },
+    {
       $project: {
         confirmationNo: 1,
         checkIn: 1,
@@ -72,11 +88,20 @@ const getTodayArrivals = async (propertyId: string) => {
         children: 1,
         status: 1,
         roomType: 1,
+        room: 1,
         guestDetails: {
           firstName: 1,
           lastName: 1,
           phone: 1,
           membershipType: 1,
+        },
+        roomTypeDetails: {
+          name: 1,
+          code: 1,
+        },
+        roomDetails: {
+          roomNumber: 1,
+          floor: 1,
         },
       },
     },

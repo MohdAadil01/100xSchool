@@ -11,6 +11,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import Reservations from "./pages/reservations/Reservations";
 import NewReservation from "./pages/reservations/NewReservation";
+import Rooms from "./pages/rooms/Rooms";
+import Guests from "./pages/guests/Guests";
+import Reports from "./pages/reports/Reports";
 
 let router = createBrowserRouter([
   {
@@ -47,6 +50,18 @@ let router = createBrowserRouter([
           {
             path: "/reservations/new",
             element: <NewReservation />,
+          },
+          {
+            path: "/rooms",
+            element: <Rooms />,
+          },
+          {
+            path: "/guests",
+            element: <Guests />,
+          },
+          {
+            path: "/reports",
+            element: <Reports />,
           },
         ],
       },

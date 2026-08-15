@@ -3,17 +3,22 @@ import { useReservations } from "../../hooks/useReservations";
 import { api } from "../../api/axios";
 import { useEffect } from "react";
 
-interface Reservation {
-  _id: string;
-  confirmationNo: string;
-  checkIn: string;
-  checkOut: string;
-  nights: number;
-  status: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-}
+// interface Reservation {
+//   _id: string;
+//   confirmationNo: string;
+//   checkIn: string;
+//   checkOut: string;
+//   nights: number;
+//   status: string;
+//   guest: {
+//     firstName: string;
+//     lastName: string;
+//     membershipType: string;
+//     phone: string;
+//     _id: string;
+//   };
+//   phone: string;
+// }
 
 const Dashboard = () => {
   const { data: arrivals = [], isLoading: arrivalsLoading } =
@@ -39,8 +44,6 @@ const Dashboard = () => {
   if (arrivalsLoading || inhouseLoading || reservedLoading) {
     return <div className="p-6">Loading...</div>;
   }
-
-  console.log(arrivals);
 
   return (
     <div className="space-y-6 p-6">
@@ -70,14 +73,21 @@ const Dashboard = () => {
 
         <div className="divide-y">
           {arrivals.length > 0 ? (
-            arrivals.map((arrival: Reservation) => (
+            arrivals.map((arrival: any) => (
               <div
                 key={arrival.confirmationNo}
                 className="flex items-center justify-between p-4"
               >
                 <div>
                   <p className="font-medium">
-                    {arrival.firstName} {arrival.lastName}
+                    {arrival.guest.firstName} {arrival.guest.lastName}
+                  </p>
+                  <p className="font-medium">{arrival.guest.email}</p>
+                  <p className="font-medium">
+                    {arrival.roomType.code} {arrival.roomType.name}
+                  </p>
+                  <p className="font-medium">
+                    {arrival.room?.roomNumber} {arrival.room?.status}
                   </p>
                   <p className="text-sm text-gray-500">
                     Confirmation: {arrival.confirmationNo}

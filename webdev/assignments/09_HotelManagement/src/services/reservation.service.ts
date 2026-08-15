@@ -187,7 +187,7 @@ const getAll = async (property: string, status?: string) => {
   const reservations = await Reservation.find({ property, ...query }).populate([
     {
       path: "guest",
-      select: "firstName lastName phone membershipType",
+      select: "firstName lastName phone membershipType email",
     },
     {
       path: "ratePlan",

@@ -143,7 +143,7 @@ function Guests() {
         {/* Error */}
         {isError && (
           <div className="border-t border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600">
-            {error?.response?.data?.error || "Something went wrong"}
+            {(error as any)?.response?.data?.error || "Something went wrong"}
           </div>
         )}
       </div>

@@ -51,7 +51,7 @@ function Rooms() {
   if (isError) {
     return (
       <div className="p-4 text-sm text-red-600">
-        {error?.response?.data?.error || "Failed to load rooms"}
+        {(error as any)?.response?.data?.error}
       </div>
     );
   }

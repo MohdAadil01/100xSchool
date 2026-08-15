@@ -163,7 +163,7 @@ function NewReservation() {
       </div>
       {reservationError && (
         <p className="text-red-500 text-sm">
-          {reservationError?.response?.data?.error}
+          {(reservationError as any)?.response?.data?.error}
         </p>
       )}
       {/* Search / Stay Details */}
@@ -260,7 +260,7 @@ function NewReservation() {
 
         {availabilityError && (
           <div className="border-t border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600">
-            {availabilityError?.response?.data?.error}
+            {(availabilityError as any)?.response?.data?.error}
           </div>
         )}
       </div>

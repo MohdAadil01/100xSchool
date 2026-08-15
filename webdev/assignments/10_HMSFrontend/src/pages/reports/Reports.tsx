@@ -110,7 +110,7 @@ const ArrivalCard = ({ propertyId }: { propertyId: string }) => {
 
       {isError ? (
         <p className="text-sm text-red-600">
-          {error?.response?.data?.error || "Something went wrong"}
+          {(error as any)?.response?.data?.error || "Something went wrong"}
         </p>
       ) : isLoading ? (
         <p className="text-sm text-gray-400">Loading...</p>
@@ -193,7 +193,7 @@ const OccupancyRate = ({ propertyId }: { propertyId: string }) => {
 
       {isError ? (
         <p className="text-sm text-red-600">
-          {error?.response?.data?.error || "Something went wrong"}
+          {(error as any)?.response?.data?.error || "Something went wrong"}
         </p>
       ) : isLoading ? (
         <p className="text-sm text-gray-400">Loading...</p>
@@ -242,7 +242,7 @@ const Revenue = ({ propertyId }: { propertyId: string }) => {
 
       {isError ? (
         <p className="text-sm text-red-600">
-          {error?.response?.data?.error || "Something went wrong"}
+          {(error as any)?.response?.data?.error || "Something went wrong"}
         </p>
       ) : isLoading ? (
         <p className="text-sm text-gray-400">Loading...</p>

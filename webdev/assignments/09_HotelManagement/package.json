@@ -23,8 +23,10 @@
     "@types/cors": "^2.8.19",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.6",
+    "@types/ioredis": "^4.28.10",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.1.1",
+    "@types/nodemailer": "^8.0.1",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -38,9 +40,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/ioredis": "^4.28.10",
     "@types/jest": "^30.0.0",
-    "@types/nodemailer": "^8.0.1",
     "@types/supertest": "^7.2.1",
     "jest": "^30.4.2",
     "mongodb-memory-server": "^11.2.0",

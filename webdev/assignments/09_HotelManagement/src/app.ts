@@ -10,6 +10,7 @@ import { ratePlanRouter } from "./routes/ratePlan.route";
 import { reservationRouter } from "./routes/reservation.route";
 import { guestRouter } from "./routes/guest.route";
 import { reportRouter } from "./routes/reports.route";
+import { authController } from "./controllers/auth.controller";
 
 export const app = express();
 
@@ -23,6 +24,7 @@ app.use(
 );
 app.use(cookieParser());
 
+app.get("/", authController.heathCheck);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/properties", propertyRouter);
 app.use("/api/v1/room-types", roomTypeRouter);

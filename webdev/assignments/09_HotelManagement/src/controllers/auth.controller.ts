@@ -52,9 +52,14 @@ const logout = AsyncHandler(async (req: Request, res: Response) => {
   res.status(200).json(ApiResponse.ok(200, null, "Logged Out"));
 });
 
+const heathCheck = (req: Request, res: Response) => {
+  res.status(200).json(ApiResponse.ok(200, "HMS API is running..."));
+};
+
 export const authController = {
   register,
   login,
   me,
   logout,
+  heathCheck,
 };

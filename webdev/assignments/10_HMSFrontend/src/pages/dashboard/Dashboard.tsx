@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useReservations } from "../../hooks/useReservations";
 import { api } from "../../api/axios";
-import { useEffect } from "react";
 
 // interface Reservation {
 //   _id: string;

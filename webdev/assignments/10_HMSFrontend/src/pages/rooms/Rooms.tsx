@@ -4,6 +4,16 @@ import { useAuth } from "../../context/AuthContext";
 import { useRooms } from "../../hooks/useRooms";
 import { useState } from "react";
 
+interface Room {
+  _id: string;
+  roomNumber: string;
+  floor: number;
+  status: string;
+  roomType: {
+    name: string;
+  };
+}
+
 function Rooms() {
   const [updatingRoomId, setUpdatingRoomId] = useState<string | null>(null);
   const { user } = useAuth();
@@ -14,9 +24,9 @@ function Rooms() {
     isLoading,
     error,
     isError,
-  } = useRooms(user?.propertyId);
+  } = useRooms(user?.propertyId!);
 
-  const { mutate: roomStatusHandler, isPending } = useMutation({
+  const { mutate: roomStatusHandler } = useMutation({
     mutationFn: async (roomId: string) => {
       setUpdatingRoomId(roomId);
       const response = await api.patch(`/rooms/${roomId}/status`, {
@@ -65,35 +75,35 @@ function Rooms() {
         <div className="rounded border bg-white px-4 py-2">
           <span className="text-xs text-gray-500">Clean</span>
           <p className="text-lg font-semibold text-green-600">
-            {rooms.filter((room) => room.status === "clean").length}
+            {rooms.filter((room: Room) => room.status === "clean").length}
           </p>
         </div>
 
         <div className="rounded border bg-white px-4 py-2">
           <span className="text-xs text-gray-500">Occupied</span>
           <p className="text-lg font-semibold text-red-500">
-            {rooms.filter((room) => room.status === "occupied").length}
+            {rooms.filter((room: Room) => room.status === "occupied").length}
           </p>
         </div>
 
         <div className="rounded border bg-white px-4 py-2">
           <span className="text-xs text-gray-500">Dirty</span>
           <p className="text-lg font-semibold text-yellow-600">
-            {rooms.filter((room) => room.status === "dirty").length}
+            {rooms.filter((room: Room) => room.status === "dirty").length}
           </p>
         </div>
 
         <div className="rounded border bg-white px-4 py-2">
           <span className="text-xs text-gray-500">Out of Order</span>
           <p className="text-lg font-semibold text-gray-500">
-            {rooms.filter((room) => room.status === "outoforder").length}
+            {rooms.filter((room: Room) => room.status === "outoforder").length}
           </p>
         </div>
       </div>
 
       {/* Room Grid */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
-        {rooms.map((room) => (
+        {rooms.map((room: Room) => (
           <RoomCard
             key={room._id}
             _id={room._id}

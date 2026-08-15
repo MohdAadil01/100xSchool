@@ -34,7 +34,6 @@ function Guests() {
 
   const {
     data: guests = [],
-    refetch,
     isLoading,
     isError,
     error,

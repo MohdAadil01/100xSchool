@@ -82,7 +82,7 @@ function NewReservation() {
     },
   });
 
-  const { refetch: searchByName, data: nameResults } = useQuery({
+  const { refetch: searchByName } = useQuery({
     queryKey: ["guests", "search", "lastname", search.lastName],
     queryFn: async () => {
       const response = await api.get("/guests/search", {
@@ -95,7 +95,7 @@ function NewReservation() {
     enabled: false,
   });
 
-  const { refetch: searchByEmail, data: emailResults } = useQuery({
+  const { refetch: searchByEmail } = useQuery({
     queryKey: ["guests", "search", "email", search.email],
     queryFn: async () => {
       const response = await api.get("/guests/search", {
@@ -128,11 +128,7 @@ function NewReservation() {
 
   const queryClient = useQueryClient();
 
-  const {
-    mutate: bookReservation,
-    error: reservationError,
-    data: reservationData,
-  } = useMutation({
+  const { mutate: bookReservation, error: reservationError } = useMutation({
     mutationFn: async () => {
       const response = await api.post("/reservations", {
         guest: guest?._id,

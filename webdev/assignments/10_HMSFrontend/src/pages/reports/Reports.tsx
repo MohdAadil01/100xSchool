@@ -16,17 +16,6 @@ interface Arrival {
   roomDetails: { roomNumber: string; floor: number }[];
 }
 
-interface OccupancyData {
-  totalRooms: number;
-  occupiedRooms: number;
-  occupancyRate: number;
-}
-
-interface RevenueData {
-  totalRevenue: number;
-  totalReservations: number;
-}
-
 function Reports() {
   const { user } = useAuth();
 

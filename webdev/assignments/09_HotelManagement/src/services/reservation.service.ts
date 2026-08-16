@@ -169,12 +169,17 @@ const create = async (input: CreateReservationInputType, createdBy: string) => {
     totalAmount,
     specialRequests,
   });
-  if (guestDetails.email) {
-    await sendMail(
-      guestDetails?.email,
-      `Booking Confirmed - ${confirmationNo}`,
-      emailTemplate,
-    );
+
+  try {
+    if (guestDetails?.email) {
+      await sendMail(
+        guestDetails?.email,
+        `Booking Confirmed - ${confirmationNo}`,
+        emailTemplate,
+      );
+    }
+  } catch (error) {
+    console.error("Email failed: " + error);
   }
 
   return reservation;

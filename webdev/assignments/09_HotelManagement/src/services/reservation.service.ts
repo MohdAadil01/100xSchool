@@ -170,8 +170,6 @@ const create = async (input: CreateReservationInputType, createdBy: string) => {
     specialRequests,
   });
 
-  console.log(guestDetails);
-
   try {
     if (guestDetails?.email) {
       await sendMail(

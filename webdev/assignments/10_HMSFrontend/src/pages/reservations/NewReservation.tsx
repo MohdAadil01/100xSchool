@@ -129,7 +129,11 @@ function NewReservation() {
 
   const queryClient = useQueryClient();
 
-  const { mutate: bookReservation, error: reservationError } = useMutation({
+  const {
+    mutate: bookReservation,
+    error: reservationError,
+    isPending: isBooking,
+  } = useMutation({
     mutationFn: async () => {
       const response = await api.post("/reservations", {
         guest: guest?._id,
@@ -145,11 +149,15 @@ function NewReservation() {
 
       return response.data.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Booking success:", data);
       queryClient.invalidateQueries({
         queryKey: ["reservations"],
       });
       navigate("/dashboard");
+    },
+    onError: (error: any) => {
+      console.log("Booking error:", error.response?.data);
     },
   });
 
@@ -586,13 +594,11 @@ function NewReservation() {
           </div>
 
           <button
-            type="button"
-            onClick={() => {
-              bookReservation();
-            }}
-            className="rounded bg-green-600 px-6 py-2 text-sm font-medium text-white hover:bg-green-700"
+            onClick={() => bookReservation()}
+            disabled={isBooking}
+            className="rounded bg-green-600 px-6 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
           >
-            Book Reservation
+            {isBooking ? "Booking..." : "Book Reservation"}
           </button>
         </div>
       )}

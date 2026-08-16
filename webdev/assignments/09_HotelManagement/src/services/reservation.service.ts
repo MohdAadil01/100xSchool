@@ -177,6 +177,7 @@ const create = async (input: CreateReservationInputType, createdBy: string) => {
         `Booking Confirmed - ${confirmationNo}`,
         emailTemplate,
       );
+      console.log("Sent Email...");
     }
   } catch (error) {
     console.error("Email failed: " + error);

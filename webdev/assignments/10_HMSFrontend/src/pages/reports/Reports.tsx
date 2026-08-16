@@ -17,47 +17,10 @@ interface Arrival {
 }
 
 function Reports() {
-  const { user } = useAuth();
+  const { user, activePropertyId } = useAuth();
 
-  const [propertyInput, setPropertyInput] = useState("");
-  const [selectedPropertyId, setSelectedPropertyId] = useState(
-    user?.propertyId || "",
-  );
-
-  if (user?.role === "superadmin" && !selectedPropertyId) {
-    return (
-      <div className="min-h-full bg-gray-50 p-6">
-        <div className="mx-auto max-w-xl">
-          <div className="rounded-lg border bg-white p-5">
-            <h1 className="text-lg font-semibold text-gray-800">Reports</h1>
-
-            <p className="mt-1 text-sm text-gray-500">
-              Enter a property ID to view its reports.
-            </p>
-
-            <div className="mt-5 flex gap-2">
-              <input
-                type="text"
-                placeholder="Enter Property ID"
-                value={propertyInput}
-                onChange={(e) => setPropertyInput(e.target.value)}
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
-              />
-
-              <button
-                type="button"
-                disabled={!propertyInput.trim()}
-                onClick={() => setSelectedPropertyId(propertyInput.trim())}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                View Reports
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const propertyId =
+    user?.role === "superadmin" ? activePropertyId : user?.propertyId;
 
   return (
     <div className="min-h-full bg-gray-50 p-4">
@@ -72,11 +35,11 @@ function Reports() {
 
       {/* KPI cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <OccupancyRate propertyId={selectedPropertyId} />
+        <OccupancyRate propertyId={propertyId!} />
 
-        <Revenue propertyId={selectedPropertyId} />
+        <Revenue propertyId={propertyId!} />
 
-        <ArrivalCard propertyId={selectedPropertyId} />
+        <ArrivalCard propertyId={propertyId!} />
       </div>
     </div>
   );

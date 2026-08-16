@@ -45,7 +45,10 @@ function NewReservation() {
     return `${year}-${month}-${day}`;
   };
 
-  const { user } = useAuth();
+  const { user, activePropertyId } = useAuth();
+  const propertyId =
+    user?.role === "superadmin" ? activePropertyId : user?.propertyId;
+
   const [checkIn, setCheckin] = useState(formatDate(today));
   const [checkOut, setCheckout] = useState(formatDate(defaultCheckOut));
   const [adults, setAdults] = useState(1);
@@ -54,8 +57,6 @@ function NewReservation() {
   const [guest, setGuest] = useState<Guest | null>(null);
   const [guestModalOpen, setGuestModalOpen] = useState(false);
   const [lastSearch, setLastSearch] = useState<Guest[]>([]);
-  const [propertyId, setPropertyId] = useState(user?.propertyId || "");
-  const propertyInputRef = useRef<HTMLInputElement>(null);
 
   const [selectedRate, setSelectedRate] = useState({
     ratePlan: "",
@@ -76,7 +77,7 @@ function NewReservation() {
         checkOut,
         adults,
         children,
-        property: user?.propertyId,
+        property: propertyId,
       });
 
       return response.data.data;
@@ -137,7 +138,7 @@ function NewReservation() {
     mutationFn: async () => {
       const response = await api.post("/reservations", {
         guest: guest?._id,
-        property: user?.propertyId,
+        property: propertyId,
         ratePlan: selectedRate.ratePlan,
         roomType: selectedRate.roomType,
         checkIn,
@@ -160,37 +161,6 @@ function NewReservation() {
       console.log("Booking error:", error.response?.data);
     },
   });
-
-  if (user?.role === "superadmin" && !propertyId) {
-    return (
-      <div className="p-6">
-        <h1 className="text-lg font-semibold mb-4">New Reservation</h1>
-        <p className="text-sm text-gray-500 mb-4">
-          Select a property to continue
-        </p>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Enter Property ID"
-            className="border rounded px-3 py-2 text-sm w-80"
-            id="propertyInput"
-            ref={propertyInputRef}
-          />
-          <button
-            className="bg-blue-600 text-white px-4 py-2 rounded text-sm"
-            onClick={() => {
-              const value = propertyInputRef.current?.value.trim();
-              if (value) {
-                setPropertyId(value);
-              }
-            }}
-          >
-            Continue
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-full bg-gray-100 p-4">
@@ -357,7 +327,7 @@ function NewReservation() {
                             roomType.roomType._id,
                           )
                         }
-                        className={`min-h-[115px] border-r border-b border-gray-200 p-3 text-left transition ${
+                        className={`min-h-28.75 border-r border-b border-gray-200 p-3 text-left transition ${
                           selected
                             ? "bg-blue-50 ring-2 ring-inset ring-blue-500"
                             : "bg-white hover:bg-gray-50"
@@ -518,7 +488,7 @@ function NewReservation() {
             </div>
 
             {/* Modal Body */}
-            <div className="max-h-[450px] overflow-y-auto p-4">
+            <div className="max-h-112.5 overflow-y-auto p-4">
               {lastSearch?.length > 0 ? (
                 <div className="divide-y divide-gray-200 rounded border border-gray-200">
                   {lastSearch.map((g: Guest) => (

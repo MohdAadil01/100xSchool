@@ -15,6 +15,10 @@ interface AuthContext {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+
+  activePropertyId: string | null;
+  setActivePropertyId: (propertyId: string | null) => void;
+
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   register: (input: RegisterUser) => Promise<void>;
@@ -24,6 +28,10 @@ export const AuthContext = React.createContext<AuthContext>({
   user: null,
   isLoading: true,
   isAuthenticated: false,
+
+  activePropertyId: null,
+  setActivePropertyId: () => {},
+
   login: async () => {},
   logout: async () => {},
   register: async () => {},
@@ -32,6 +40,7 @@ export const AuthContext = React.createContext<AuthContext>({
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [activePropertyId, setActivePropertyId] = useState<string | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -90,6 +99,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login,
         logout,
         register,
+        activePropertyId,
+        setActivePropertyId,
       }}
     >
       {children}

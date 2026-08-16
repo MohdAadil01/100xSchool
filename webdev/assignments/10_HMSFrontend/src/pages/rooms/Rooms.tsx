@@ -16,15 +16,12 @@ interface Room {
 
 function Rooms() {
   const [updatingRoomId, setUpdatingRoomId] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, activePropertyId } = useAuth();
+  const propertyId =
+    user?.role === "superadmin" ? activePropertyId : user?.propertyId;
   const queryClient = useQueryClient();
 
-  const {
-    data: rooms = [],
-    isLoading,
-    error,
-    isError,
-  } = useRooms(user?.propertyId!);
+  const { data: rooms = [], isLoading, error, isError } = useRooms(propertyId!);
 
   const { mutate: roomStatusHandler } = useMutation({
     mutationFn: async (roomId: string) => {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { api } from "../../api/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
@@ -45,6 +45,7 @@ function NewReservation() {
     return `${year}-${month}-${day}`;
   };
 
+  const { user } = useAuth();
   const [checkIn, setCheckin] = useState(formatDate(today));
   const [checkOut, setCheckout] = useState(formatDate(defaultCheckOut));
   const [adults, setAdults] = useState(1);
@@ -53,6 +54,8 @@ function NewReservation() {
   const [guest, setGuest] = useState<Guest | null>(null);
   const [guestModalOpen, setGuestModalOpen] = useState(false);
   const [lastSearch, setLastSearch] = useState<Guest[]>([]);
+  const [propertyId, setPropertyId] = useState(user?.propertyId || "");
+  const propertyInputRef = useRef<HTMLInputElement>(null);
 
   const [selectedRate, setSelectedRate] = useState({
     ratePlan: "",
@@ -60,8 +63,6 @@ function NewReservation() {
   });
 
   const navigate = useNavigate();
-
-  const { user } = useAuth();
 
   const {
     mutate: fetchAvailability,
@@ -151,6 +152,37 @@ function NewReservation() {
       navigate("/dashboard");
     },
   });
+
+  if (user?.role === "superadmin" && !propertyId) {
+    return (
+      <div className="p-6">
+        <h1 className="text-lg font-semibold mb-4">New Reservation</h1>
+        <p className="text-sm text-gray-500 mb-4">
+          Select a property to continue
+        </p>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Enter Property ID"
+            className="border rounded px-3 py-2 text-sm w-80"
+            id="propertyInput"
+            ref={propertyInputRef}
+          />
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded text-sm"
+            onClick={() => {
+              const value = propertyInputRef.current?.value.trim();
+              if (value) {
+                setPropertyId(value);
+              }
+            }}
+          >
+            Continue
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full bg-gray-100 p-4">

@@ -1,6 +1,8 @@
 import nodemailer from "nodemailer";
 import { ENV } from "../config/env";
+import { Resend } from "resend";
 
+const resend = new Resend(ENV.RESEND_API_KEY);
 export const transporter = nodemailer.createTransport({
   host: ENV.EMAIL_HOST,
   port: Number(ENV.EMAIL_PORT),
@@ -11,9 +13,18 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
+// export const sendMail = async (to: string, subject: string, html: string) => {
+//   await transporter.sendMail({
+//     from: `"${ENV.EMAIL_FROM_NAME}" <${ENV.EMAIL_USER}`,
+//     to,
+//     subject,
+//     html,
+//   });
+// };
+
 export const sendMail = async (to: string, subject: string, html: string) => {
-  await transporter.sendMail({
-    from: `"${ENV.EMAIL_FROM_NAME}" <${ENV.EMAIL_USER}`,
+  await resend.emails.send({
+    from: `"${ENV.EMAIL_FROM_NAME}" <${ENV.RESEND_FROM}`,
     to,
     subject,
     html,

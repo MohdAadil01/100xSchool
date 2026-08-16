@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { api } from "../../api/axios";
+import { Link } from "react-router-dom";
 
 interface Guest {
   _id: string;
@@ -136,6 +137,9 @@ function Guests() {
               >
                 Search
               </button>
+              <div>
+                <Link to={"/guests/create"}>Create Guest</Link>
+              </div>
             </div>
           </div>
         </div>

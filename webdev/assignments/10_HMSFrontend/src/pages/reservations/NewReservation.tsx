@@ -2,7 +2,7 @@ import { useState } from "react";
 import { api } from "../../api/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface RoomType {
   _id: string;
@@ -430,6 +430,9 @@ function NewReservation() {
                   Search
                 </button>
               </div>
+              <div>
+                <Link to={"/guests/create"}>Create Profile</Link>
+              </div>
             </div>
 
             {/* Selected Guest */}
@@ -480,7 +483,10 @@ function NewReservation() {
 
               <button
                 type="button"
-                onClick={() => setGuestModalOpen(false)}
+                onClick={() => {
+                  setGuestModalOpen(false);
+                  setSearch({ lastName: "", email: "" });
+                }}
                 className="text-lg text-gray-400 hover:text-gray-700"
               >
                 ×
@@ -517,6 +523,7 @@ function NewReservation() {
                         onClick={() => {
                           setGuest(g);
                           setGuestModalOpen(false);
+                          setSearch({ lastName: "", email: "" });
                         }}
                         className="rounded border border-blue-600 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50"
                       >
@@ -542,7 +549,10 @@ function NewReservation() {
             <div className="flex justify-end border-t border-gray-200 px-5 py-3">
               <button
                 type="button"
-                onClick={() => setGuestModalOpen(false)}
+                onClick={() => {
+                  setGuestModalOpen(false);
+                  setSearch({ lastName: "", email: "" });
+                }}
                 className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
               >
                 Cancel

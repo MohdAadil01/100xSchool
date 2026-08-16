@@ -19,5 +19,6 @@ export const ENV = z
     REDIS_PASSWORD: z.string(),
     REDIS_URL: z.string(),
     CLIENT_URL: z.string(),
+    NODE_ENV: z.string(),
   })
   .parse(process.env);

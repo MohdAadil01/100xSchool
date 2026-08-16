@@ -6,6 +6,9 @@ import {
 } from "../validators/auth.validator";
 import { authService } from "../services/auth.service";
 import { ApiResponse } from "../utils/ApiResponse";
+import { ENV } from "../config/env";
+
+const isProduction = ENV.NODE_ENV === "production";
 
 const register = AsyncHandler(async (req: Request, res: Response) => {
   const parsedBody = registerInputSchema.parse(req.body);
@@ -14,8 +17,8 @@ const register = AsyncHandler(async (req: Request, res: Response) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 10 * 24 * 60 * 60 * 1000,
   });
 
@@ -29,8 +32,8 @@ const login = AsyncHandler(async (req: Request, res: Response) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 10 * 24 * 60 * 60 * 1000,
   });
 
@@ -46,8 +49,8 @@ const me = AsyncHandler(async (req: Request, res: Response) => {
 const logout = AsyncHandler(async (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
   });
   res.status(200).json(ApiResponse.ok(200, null, "Logged Out"));
 });

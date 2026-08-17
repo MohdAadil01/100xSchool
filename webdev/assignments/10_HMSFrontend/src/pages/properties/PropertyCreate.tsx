@@ -36,19 +36,7 @@ function PropertyCreate() {
       const response = await api.post("/properties", propertyData);
       return response.data.data;
     },
-    onSuccess: (data) => {
-      const { name, address, city, country, phone, email, currency, timezone } =
-        data;
-      setPropertyData({
-        name,
-        address,
-        city,
-        country,
-        phone,
-        email,
-        currency,
-        timezone,
-      });
+    onSuccess: () => {
       console.log("Property Created...");
       navigate("/properties");
     },
@@ -57,7 +45,9 @@ function PropertyCreate() {
     },
   });
 
-  const onChangeInputHandler = (e: any) => {
+  const onChangeInputHandler = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     setPropertyData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -243,7 +233,7 @@ function PropertyCreate() {
                 <option value="EUR">EUR - Euro</option>
                 <option value="GBP">GBP - British Pound</option>
                 <option value="AED">AED - Dubai</option>
-                <option value="SDG">SDG - Singapore</option>
+                <option value="SDG">SDG - Singapore Dollar</option>
               </select>
             </div>
 
@@ -278,6 +268,7 @@ function PropertyCreate() {
             <button
               type="button"
               className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              onClick={() => navigate("/properties")}
             >
               Cancel
             </button>

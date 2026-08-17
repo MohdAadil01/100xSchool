@@ -40,7 +40,18 @@ export const AuthContext = React.createContext<AuthContext>({
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activePropertyId, setActivePropertyId] = useState<string | null>(null);
+  const [activePropertyId, setActivePropertyId] = useState<string | null>(
+    localStorage.getItem("activePropertyId"),
+  );
+
+  const handleSetActivePropertyId = (id: string | null) => {
+    if (id) {
+      localStorage.setItem("activePropertyId", id);
+    } else {
+      localStorage.removeItem("activePropertyId");
+    }
+    setActivePropertyId(id);
+  };
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -73,6 +84,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     await api.post("/auth/logout");
     setUser(null);
+    localStorage.removeItem("activePropertyId");
+    setActivePropertyId(null);
   };
 
   const register = async (input: RegisterUser) => {
@@ -100,7 +113,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         logout,
         register,
         activePropertyId,
-        setActivePropertyId,
+        setActivePropertyId: handleSetActivePropertyId,
       }}
     >
       {children}

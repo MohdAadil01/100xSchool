@@ -20,14 +20,23 @@ import { api } from "../../api/axios";
 // }
 
 const Dashboard = () => {
-  const { data: arrivals = [], isLoading: arrivalsLoading } =
-    useReservations("arrival");
+  const {
+    data: arrivals = [],
+    isLoading: arrivalsLoading,
+    error: arrivalError,
+  } = useReservations("arrival");
 
-  const { data: inhouse = [], isLoading: inhouseLoading } =
-    useReservations("inhouse");
+  const {
+    data: inhouse = [],
+    isLoading: inhouseLoading,
+    error: inhouseError,
+  } = useReservations("inhouse");
 
-  const { data: reserved = [], isLoading: reservedLoading } =
-    useReservations("reserved");
+  const {
+    data: reserved = [],
+    isLoading: reservedLoading,
+    error: reservedError,
+  } = useReservations("reserved");
 
   const queryClient = useQueryClient();
 
@@ -51,16 +60,19 @@ const Dashboard = () => {
         <div className="rounded-lg border p-4">
           <p className="text-sm text-gray-500">Arrivals</p>
           <p className="text-2xl font-semibold">{arrivals.length}</p>
+          {(arrivalError as any)?.response?.data?.error}
         </div>
 
         <div className="rounded-lg border p-4">
           <p className="text-sm text-gray-500">In-house</p>
           <p className="text-2xl font-semibold">{inhouse.length}</p>
+          {(inhouseError as any)?.response?.data?.error}
         </div>
 
         <div className="rounded-lg border p-4">
           <p className="text-sm text-gray-500">Reserved</p>
           <p className="text-2xl font-semibold">{reserved.length}</p>
+          {(reservedError as any)?.response?.data?.error}
         </div>
       </div>
 

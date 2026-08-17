@@ -30,6 +30,7 @@ function Reservations() {
   });
 
   if (isReservationLoading) return <div>Loading...</div>;
+
   return (
     <div>
       <div>

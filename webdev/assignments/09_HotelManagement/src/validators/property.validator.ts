@@ -8,7 +8,7 @@ export const createPropertyInputSchema = z.object({
   phone: z.string(),
   email: z.email(),
   currency: z.enum(["USD", "INR", "EUR", "GBP", "AED", "SGD"]),
-  timezone: z.string(),
+  timezone: z.string("Timezone is required"),
 });
 
 export type CreatePropertyInputType = z.infer<typeof createPropertyInputSchema>;

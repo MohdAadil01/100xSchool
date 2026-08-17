@@ -16,6 +16,7 @@ import Guests from "./pages/guests/Guests";
 import Reports from "./pages/reports/Reports";
 import GuestCreate from "./pages/guests/GuestCreate";
 import PropertyCreate from "./pages/properties/PropertyCreate";
+import Properties from "./pages/properties/Properties";
 
 let router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ let router = createBrowserRouter([
           {
             path: "/reports",
             element: <Reports />,
+          },
+          {
+            path: "/properties",
+            element: <Properties />,
           },
           {
             path: "/properties/create",

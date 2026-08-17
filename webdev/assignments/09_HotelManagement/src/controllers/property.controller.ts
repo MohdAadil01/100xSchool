@@ -13,6 +13,15 @@ const create = AsyncHandler(async (req: Request, res: Response) => {
     .json(ApiResponse.ok(201, response, "Created Property"));
 });
 
+const getAll = AsyncHandler(async (req: Request, res: Response) => {
+  const response = await propertyService.getAll();
+
+  return res
+    .status(200)
+    .json(ApiResponse.ok(200, response, "Fetched all propertes"));
+});
+
 export const propertyController = {
   create,
+  getAll,
 };

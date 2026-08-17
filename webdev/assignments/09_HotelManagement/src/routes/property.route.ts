@@ -10,3 +10,10 @@ propertyRouter.post(
   roleMiddleware("superadmin"),
   propertyController.create,
 );
+
+propertyRouter.get(
+  "/",
+  authMiddleware,
+  roleMiddleware("superadmin"),
+  propertyController.getAll,
+);

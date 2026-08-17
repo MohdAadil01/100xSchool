@@ -27,4 +27,9 @@ const create = async (input: CreatePropertyInputType) => {
   return property.toObject();
 };
 
-export const propertyService = { create };
+const getAll = async () => {
+  const properties = await Property.find({});
+  return properties;
+};
+
+export const propertyService = { create, getAll };

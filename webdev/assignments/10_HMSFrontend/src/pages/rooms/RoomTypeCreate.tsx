@@ -1,0 +1,378 @@
+import { useState } from "react";
+
+function RoomTypeCreate() {
+  const [showFeatures, setShowFeatures] = useState(false);
+
+  const [features, setFeatures] = useState<string[]>([]);
+
+  const availableFeatures = [
+    {
+      value: "wifi",
+      label: "WiFi",
+      description: "Complimentary wireless internet",
+    },
+    {
+      value: "air_conditioning",
+      label: "Air Conditioning",
+      description: "Individually controlled AC",
+    },
+    {
+      value: "tv",
+      label: "Television",
+      description: "Smart or cable television",
+    },
+    {
+      value: "mini_bar",
+      label: "Mini Bar",
+      description: "In-room minibar",
+    },
+    {
+      value: "room_service",
+      label: "Room Service",
+      description: "In-room dining and service",
+    },
+    {
+      value: "balcony",
+      label: "Balcony",
+      description: "Private room balcony",
+    },
+    {
+      value: "bathtub",
+      label: "Bathtub",
+      description: "Private bathtub",
+    },
+    {
+      value: "parking",
+      label: "Parking",
+      description: "Complimentary parking",
+    },
+  ];
+
+  const toggleFeature = (feature: string) => {
+    setFeatures((prev) =>
+      prev.includes(feature)
+        ? prev.filter((item) => item !== feature)
+        : [...prev, feature],
+    );
+  };
+
+  const removeFeature = (feature: string) => {
+    setFeatures((prev) => prev.filter((item) => item !== feature));
+  };
+
+  return (
+    <div className="min-h-full bg-gray-50 p-6">
+      <div className="mx-auto max-w-3xl">
+        <div className="mb-6">
+          <h1 className="text-xl font-semibold text-gray-800">
+            Create Room Type
+          </h1>
+
+          <p className="mt-1 text-sm text-gray-500">
+            Add the details and features for a new room type.
+          </p>
+        </div>
+
+        <form className="rounded-lg border border-gray-200 bg-white shadow-sm">
+          <div className="border-b border-gray-200 px-6 py-4">
+            <h2 className="text-sm font-semibold text-gray-800">
+              Basic Information
+            </h2>
+
+            <p className="mt-1 text-xs text-gray-500">
+              Define the basic details of the room type.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 p-6 md:grid-cols-2">
+            <div>
+              <label
+                htmlFor="code"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Room Type Code
+              </label>
+
+              <input
+                type="text"
+                id="code"
+                name="code"
+                placeholder="e.g. DLXK"
+                required
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm uppercase outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
+
+              <p className="mt-1 text-xs text-gray-400">
+                Short unique code for the room type.
+              </p>
+            </div>
+
+            <div>
+              <label
+                htmlFor="name"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Room Type Name
+              </label>
+
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="e.g. Deluxe King Room"
+                required
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label
+                htmlFor="description"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Description
+              </label>
+
+              <textarea
+                id="description"
+                name="description"
+                rows={3}
+                placeholder="Describe the room type..."
+                required
+                className="w-full resize-none rounded-md border border-gray-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="bedType"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Bed Type
+              </label>
+
+              <select
+                id="bedType"
+                name="bedType"
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="">Select Bed Type</option>
+                <option value="king">King</option>
+                <option value="queen">Queen</option>
+                <option value="double">Double</option>
+                <option value="twin">Twin</option>
+                <option value="single">Single</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="maxOccupancy"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Maximum Occupancy
+              </label>
+
+              <input
+                type="number"
+                id="maxOccupancy"
+                name="maxOccupancy"
+                min="1"
+                placeholder="e.g. 2"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          <div className="border-y border-gray-200 px-6 py-4">
+            <h2 className="text-sm font-semibold text-gray-800">
+              Room Features
+            </h2>
+
+            <p className="mt-1 text-xs text-gray-500">
+              Select the features and amenities available in this room type.
+            </p>
+          </div>
+
+          <div className="p-6">
+            <button
+              type="button"
+              onClick={() => setShowFeatures(true)}
+              className="min-h-11 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-left transition hover:border-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              {features.length === 0 ? (
+                <span className="text-sm text-gray-400">
+                  Select room features...
+                </span>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {features.map((feature) => {
+                    const selectedFeature = availableFeatures.find(
+                      (item) => item.value === feature,
+                    );
+
+                    return (
+                      <span
+                        key={feature}
+                        className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700"
+                      >
+                        {selectedFeature?.label || feature}
+
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeFeature(feature);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              removeFeature(feature);
+                            }
+                          }}
+                          className="cursor-pointer rounded-full px-1 text-blue-500 hover:bg-blue-100 hover:text-blue-700"
+                        >
+                          ×
+                        </span>
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+            </button>
+
+            {features.length > 0 && (
+              <p className="mt-2 text-xs text-gray-400">
+                {features.length} feature
+                {features.length > 1 ? "s" : ""} selected
+              </p>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+            <button
+              type="button"
+              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+            >
+              Create Room Type
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Feature Modal */}
+      {showFeatures && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-lg rounded-lg bg-white shadow-xl">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
+              <div>
+                <h2 className="font-semibold text-gray-800">
+                  Select Room Features
+                </h2>
+
+                <p className="mt-1 text-xs text-gray-500">
+                  Select all features available for this room type.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowFeatures(false)}
+                className="rounded-md px-2 py-1 text-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Feature List */}
+            <div className="max-h-[400px] overflow-y-auto p-4">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {availableFeatures.map((feature) => {
+                  const isSelected = features.includes(feature.value);
+
+                  return (
+                    <button
+                      type="button"
+                      key={feature.value}
+                      onClick={() => toggleFeature(feature.value)}
+                      className={`rounded-md border p-3 text-left transition ${
+                        isSelected
+                          ? "border-blue-300 bg-blue-50"
+                          : "border-gray-200 bg-white hover:bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        {/* Selection Indicator */}
+                        <div
+                          className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
+                            isSelected
+                              ? "border-blue-600 bg-blue-600 text-white"
+                              : "border-gray-300 bg-white"
+                          }`}
+                        >
+                          {isSelected && <span className="text-xs">✓</span>}
+                        </div>
+
+                        <div>
+                          <p
+                            className={`text-sm font-medium ${
+                              isSelected ? "text-blue-700" : "text-gray-700"
+                            }`}
+                          >
+                            {feature.label}
+                          </p>
+
+                          <p className="mt-0.5 text-xs text-gray-400">
+                            {feature.description}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-5 py-4">
+              <p className="text-sm text-gray-500">
+                {features.length} selected
+              </p>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowFeatures(false)}
+                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowFeatures(false)}
+                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default RoomTypeCreate;

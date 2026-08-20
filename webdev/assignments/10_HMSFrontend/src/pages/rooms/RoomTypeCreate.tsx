@@ -48,21 +48,24 @@ function RoomTypeCreate() {
     },
   ];
 
-  const toggleFeature = (feature: string) => {
-    setFeatures((prev) =>
-      prev.includes(feature)
-        ? prev.filter((item) => item !== feature)
-        : [...prev, feature],
-    );
+  const toggleFeatures = (feature: string) => {
+    setFeatures((prev) => {
+      if (prev.includes(feature)) {
+        return prev.filter((f) => f !== feature);
+      }
+
+      return [...prev, feature];
+    });
   };
 
   const removeFeature = (feature: string) => {
-    setFeatures((prev) => prev.filter((item) => item !== feature));
+    setFeatures((prev) => prev.filter((f) => f !== feature));
   };
 
   return (
     <div className="min-h-full bg-gray-50 p-6">
       <div className="mx-auto max-w-3xl">
+        {/* Header */}
         <div className="mb-6">
           <h1 className="text-xl font-semibold text-gray-800">
             Create Room Type
@@ -73,7 +76,9 @@ function RoomTypeCreate() {
           </p>
         </div>
 
+        {/* Form */}
         <form className="rounded-lg border border-gray-200 bg-white shadow-sm">
+          {/* Basic Information Header */}
           <div className="border-b border-gray-200 px-6 py-4">
             <h2 className="text-sm font-semibold text-gray-800">
               Basic Information
@@ -84,7 +89,9 @@ function RoomTypeCreate() {
             </p>
           </div>
 
+          {/* Basic Information */}
           <div className="grid grid-cols-1 gap-5 p-6 md:grid-cols-2">
+            {/* Code */}
             <div>
               <label
                 htmlFor="code"
@@ -107,6 +114,7 @@ function RoomTypeCreate() {
               </p>
             </div>
 
+            {/* Name */}
             <div>
               <label
                 htmlFor="name"
@@ -125,6 +133,7 @@ function RoomTypeCreate() {
               />
             </div>
 
+            {/* Description */}
             <div className="md:col-span-2">
               <label
                 htmlFor="description"
@@ -143,6 +152,7 @@ function RoomTypeCreate() {
               />
             </div>
 
+            {/* Bed Type */}
             <div>
               <label
                 htmlFor="bedType"
@@ -165,6 +175,7 @@ function RoomTypeCreate() {
               </select>
             </div>
 
+            {/* Maximum Occupancy */}
             <div>
               <label
                 htmlFor="maxOccupancy"
@@ -184,6 +195,7 @@ function RoomTypeCreate() {
             </div>
           </div>
 
+          {/* Features Header */}
           <div className="border-y border-gray-200 px-6 py-4">
             <h2 className="text-sm font-semibold text-gray-800">
               Room Features
@@ -194,17 +206,14 @@ function RoomTypeCreate() {
             </p>
           </div>
 
+          {/* Feature Selector */}
           <div className="p-6">
             <button
               type="button"
               onClick={() => setShowFeatures(true)}
               className="min-h-11 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-left transition hover:border-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              {features.length === 0 ? (
-                <span className="text-sm text-gray-400">
-                  Select room features...
-                </span>
-              ) : (
+              {features.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {features.map((feature) => {
                     const selectedFeature = availableFeatures.find(
@@ -214,23 +223,14 @@ function RoomTypeCreate() {
                     return (
                       <span
                         key={feature}
-                        className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700"
+                        className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700"
                       >
-                        {selectedFeature?.label || feature}
+                        {selectedFeature?.label}
 
                         <span
-                          role="button"
-                          tabIndex={0}
                           onClick={(e) => {
                             e.stopPropagation();
                             removeFeature(feature);
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              removeFeature(feature);
-                            }
                           }}
                           className="cursor-pointer rounded-full px-1 text-blue-500 hover:bg-blue-100 hover:text-blue-700"
                         >
@@ -240,6 +240,10 @@ function RoomTypeCreate() {
                     );
                   })}
                 </div>
+              ) : (
+                <span className="text-sm text-gray-400">
+                  Select room features...
+                </span>
               )}
             </button>
 
@@ -255,14 +259,14 @@ function RoomTypeCreate() {
           <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
             <button
               type="button"
-              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+              className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700"
             >
               Create Room Type
             </button>
@@ -295,46 +299,53 @@ function RoomTypeCreate() {
               </button>
             </div>
 
-            {/* Feature List */}
-            <div className="max-h-[400px] overflow-y-auto p-4">
+            {/* Features */}
+            <div className="max-h-100 overflow-y-auto p-4">
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {availableFeatures.map((feature) => {
-                  const isSelected = features.includes(feature.value);
+                {availableFeatures.map((availableFeature) => {
+                  const isAlreadySelected = features.includes(
+                    availableFeature.value,
+                  );
 
                   return (
                     <button
                       type="button"
-                      key={feature.value}
-                      onClick={() => toggleFeature(feature.value)}
+                      key={availableFeature.value}
+                      onClick={() => toggleFeatures(availableFeature.value)}
                       className={`rounded-md border p-3 text-left transition ${
-                        isSelected
+                        isAlreadySelected
                           ? "border-blue-300 bg-blue-50"
                           : "border-gray-200 bg-white hover:bg-gray-50"
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        {/* Selection Indicator */}
+                        {/* Selection indicator */}
                         <div
                           className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
-                            isSelected
+                            isAlreadySelected
                               ? "border-blue-600 bg-blue-600 text-white"
                               : "border-gray-300 bg-white"
                           }`}
                         >
-                          {isSelected && <span className="text-xs">✓</span>}
+                          {isAlreadySelected && (
+                            <span className="text-xs">✓</span>
+                          )}
                         </div>
 
+                        {/* Feature information */}
                         <div>
                           <p
                             className={`text-sm font-medium ${
-                              isSelected ? "text-blue-700" : "text-gray-700"
+                              isAlreadySelected
+                                ? "text-blue-700"
+                                : "text-gray-700"
                             }`}
                           >
-                            {feature.label}
+                            {availableFeature.label}
                           </p>
 
                           <p className="mt-0.5 text-xs text-gray-400">
-                            {feature.description}
+                            {availableFeature.description}
                           </p>
                         </div>
                       </div>

@@ -1,52 +1,73 @@
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import React, { useState } from "react";
+import { api } from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
+interface RoomType {
+  code: string;
+  name: string;
+  description: string;
+  bedType: "king" | "queen" | "double" | "twin" | "single";
+  maxOccupancy: number;
+}
+const availableFeatures = [
+  {
+    value: "wifi",
+    label: "WiFi",
+    description: "Complimentary wireless internet",
+  },
+  {
+    value: "air_conditioning",
+    label: "Air Conditioning",
+    description: "Individually controlled AC",
+  },
+  {
+    value: "tv",
+    label: "Television",
+    description: "Smart or cable television",
+  },
+  {
+    value: "mini_bar",
+    label: "Mini Bar",
+    description: "In-room minibar",
+  },
+  {
+    value: "room_service",
+    label: "Room Service",
+    description: "In-room dining and service",
+  },
+  {
+    value: "balcony",
+    label: "Balcony",
+    description: "Private room balcony",
+  },
+  {
+    value: "bathtub",
+    label: "Bathtub",
+    description: "Private bathtub",
+  },
+  {
+    value: "parking",
+    label: "Parking",
+    description: "Complimentary parking",
+  },
+];
 
 function RoomTypeCreate() {
+  const [formData, setFormData] = useState<RoomType>({
+    code: "",
+    name: "",
+    description: "",
+    bedType: "king",
+    maxOccupancy: 2,
+  });
   const [showFeatures, setShowFeatures] = useState(false);
 
   const [features, setFeatures] = useState<string[]>([]);
 
-  const availableFeatures = [
-    {
-      value: "wifi",
-      label: "WiFi",
-      description: "Complimentary wireless internet",
-    },
-    {
-      value: "air_conditioning",
-      label: "Air Conditioning",
-      description: "Individually controlled AC",
-    },
-    {
-      value: "tv",
-      label: "Television",
-      description: "Smart or cable television",
-    },
-    {
-      value: "mini_bar",
-      label: "Mini Bar",
-      description: "In-room minibar",
-    },
-    {
-      value: "room_service",
-      label: "Room Service",
-      description: "In-room dining and service",
-    },
-    {
-      value: "balcony",
-      label: "Balcony",
-      description: "Private room balcony",
-    },
-    {
-      value: "bathtub",
-      label: "Bathtub",
-      description: "Private bathtub",
-    },
-    {
-      value: "parking",
-      label: "Parking",
-      description: "Complimentary parking",
-    },
-  ];
+  const { user, activePropertyId } = useAuth();
+  const navigate = useNavigate();
 
   const toggleFeatures = (feature: string) => {
     setFeatures((prev) => {
@@ -60,6 +81,50 @@ function RoomTypeCreate() {
 
   const removeFeature = (feature: string) => {
     setFeatures((prev) => prev.filter((f) => f !== feature));
+  };
+
+  const {
+    mutate: createRoomType,
+    error,
+    isPending,
+  } = useMutation({
+    mutationFn: async () => {
+      const response = await api.post("/room-types", {
+        ...formData,
+        property:
+          user?.role === "superadmin" ? activePropertyId : user?.propertyId,
+        features,
+      });
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      console.log("Room Type created.");
+      console.log(data);
+      navigate("/room-types");
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
+
+  const onChangeHandler = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const value =
+      e.target.name === "maxOccupancy"
+        ? Number(e.target.value)
+        : e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: value,
+    }));
+  };
+
+  const createRoomTypeHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    createRoomType();
   };
 
   return (
@@ -77,7 +142,10 @@ function RoomTypeCreate() {
         </div>
 
         {/* Form */}
-        <form className="rounded-lg border border-gray-200 bg-white shadow-sm">
+        <form
+          className="rounded-lg border border-gray-200 bg-white shadow-sm"
+          onSubmit={createRoomTypeHandler}
+        >
           {/* Basic Information Header */}
           <div className="border-b border-gray-200 px-6 py-4">
             <h2 className="text-sm font-semibold text-gray-800">
@@ -104,6 +172,8 @@ function RoomTypeCreate() {
                 type="text"
                 id="code"
                 name="code"
+                value={formData?.code}
+                onChange={onChangeHandler}
                 placeholder="e.g. DLXK"
                 required
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm uppercase outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
@@ -127,6 +197,8 @@ function RoomTypeCreate() {
                 type="text"
                 id="name"
                 name="name"
+                value={formData?.name}
+                onChange={onChangeHandler}
                 placeholder="e.g. Deluxe King Room"
                 required
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
@@ -145,6 +217,8 @@ function RoomTypeCreate() {
               <textarea
                 id="description"
                 name="description"
+                value={formData?.description}
+                onChange={onChangeHandler}
                 rows={3}
                 placeholder="Describe the room type..."
                 required
@@ -164,6 +238,8 @@ function RoomTypeCreate() {
               <select
                 id="bedType"
                 name="bedType"
+                value={formData?.bedType}
+                onChange={onChangeHandler}
                 className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
                 <option value="">Select Bed Type</option>
@@ -188,6 +264,8 @@ function RoomTypeCreate() {
                 type="number"
                 id="maxOccupancy"
                 name="maxOccupancy"
+                value={formData?.maxOccupancy}
+                onChange={onChangeHandler}
                 min="1"
                 placeholder="e.g. 2"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
@@ -255,20 +333,21 @@ function RoomTypeCreate() {
             )}
           </div>
 
+          {error && <p>{(error as any)?.response?.data?.error}</p>}
           {/* Actions */}
           <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
             <button
               type="button"
+              onClick={() => navigate("/room-types")}
               className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               Cancel
             </button>
-
             <button
               type="submit"
               className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700"
             >
-              Create Room Type
+              {isPending ? "Creating..." : "Create Room Type"}
             </button>
           </div>
         </form>

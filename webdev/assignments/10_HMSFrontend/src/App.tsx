@@ -18,6 +18,7 @@ import GuestCreate from "./pages/guests/GuestCreate";
 import PropertyCreate from "./pages/properties/PropertyCreate";
 import Properties from "./pages/properties/Properties";
 import RoomTypeCreate from "./pages/rooms/RoomTypeCreate";
+import RoomType from "./pages/rooms/RoomType";
 
 let router = createBrowserRouter([
   {
@@ -80,8 +81,12 @@ let router = createBrowserRouter([
             element: <PropertyCreate />,
           },
           {
-            path: "/rooms/create",
+            path: "/room-types/create",
             element: <RoomTypeCreate />,
+          },
+          {
+            path: "/room-types",
+            element: <RoomType />,
           },
         ],
       },

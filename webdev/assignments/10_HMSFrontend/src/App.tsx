@@ -19,6 +19,7 @@ import PropertyCreate from "./pages/properties/PropertyCreate";
 import Properties from "./pages/properties/Properties";
 import RoomTypeCreate from "./pages/rooms/RoomTypeCreate";
 import RoomType from "./pages/rooms/RoomType";
+import RoomCreate from "./pages/rooms/RoomCreate";
 
 let router = createBrowserRouter([
   {
@@ -87,6 +88,10 @@ let router = createBrowserRouter([
           {
             path: "/room-types",
             element: <RoomType />,
+          },
+          {
+            path: "/rooms/create",
+            element: <RoomCreate />,
           },
         ],
       },

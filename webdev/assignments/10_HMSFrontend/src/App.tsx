@@ -20,6 +20,7 @@ import Properties from "./pages/properties/Properties";
 import RoomTypeCreate from "./pages/rooms/RoomTypeCreate";
 import RoomType from "./pages/rooms/RoomType";
 import RoomCreate from "./pages/rooms/RoomCreate";
+import RatePlanCreate from "./pages/rateplan/RatePlanCreate";
 
 let router = createBrowserRouter([
   {
@@ -92,6 +93,10 @@ let router = createBrowserRouter([
           {
             path: "/rooms/create",
             element: <RoomCreate />,
+          },
+          {
+            path: "/rate-plan/create",
+            element: <RatePlanCreate />,
           },
         ],
       },

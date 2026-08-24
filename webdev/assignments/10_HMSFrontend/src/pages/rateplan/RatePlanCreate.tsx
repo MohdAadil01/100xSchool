@@ -37,11 +37,13 @@ function RatePlanCreate() {
   });
 
   const [showRoomTypes, setShowRoomTypes] = useState(false);
+
   const [selectedRoomTypes, setSelectedRoomTypes] = useState<
     SelectedRoomType[]
   >([]);
 
   const { user, activePropertyId } = useAuth();
+
   const propertyId =
     user?.role === "superadmin" ? activePropertyId : user?.propertyId;
 
@@ -60,6 +62,7 @@ function RatePlanCreate() {
           propertyId,
         },
       });
+
       return response.data.data;
     },
     enabled: !!propertyId,
@@ -76,6 +79,7 @@ function RatePlanCreate() {
         roomType: r.roomType._id,
         pricePerNight: r.pricePerNight,
       }));
+
       const response = await api.post("/rate-plans", {
         code: formData.code,
         name: formData.name,
@@ -88,10 +92,12 @@ function RatePlanCreate() {
 
       return response.data.data;
     },
+
     onSuccess: (data) => {
       console.log("Rate Plan created.");
       navigate("/rate-plans");
     },
+
     onError: (err) => {
       console.log(err);
     },
@@ -123,156 +129,412 @@ function RatePlanCreate() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const value = e.target.value;
-    setFormData((prev) => ({ ...prev, [e.target.name]: value }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: value,
+    }));
   };
 
   const createRatePlanHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!propertyId) return;
+
     if (selectedRoomTypes.length === 0) return;
 
     const invalidPrice = selectedRoomTypes.some(
       (room) => room.pricePerNight <= 0,
     );
+
     if (invalidPrice) return;
 
     createRatePlan();
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="flex min-h-full items-center justify-center bg-gray-50">
+        <div className="text-sm text-gray-500">Loading room types...</div>
+      </div>
+    );
 
   return (
-    <div>
-      {isError && <p>{(roomTypeError as any)?.response?.data?.error}</p>}
-      <form onSubmit={createRatePlanHandler}>
-        <input
-          type="text"
-          name="code"
-          placeholder="Enter code"
-          value={formData.code}
-          onChange={onChangeInputHandler}
-          required
-        />
-        <input
-          type="text"
-          name="name"
-          placeholder="Enter name"
-          value={formData.name}
-          onChange={onChangeInputHandler}
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Enter description"
-          value={formData.description}
-          onChange={onChangeInputHandler}
-          rows={3}
-          required
-        />
-        <input
-          type="date"
-          name="startDate"
-          placeholder="Enter start Date"
-          value={formData.startDate}
-          onChange={onChangeInputHandler}
-          required
-        />
-        <input
-          type="date"
-          name="endDate"
-          placeholder="Enter end Date"
-          value={formData.endDate}
-          onChange={onChangeInputHandler}
-          required
-        />
+    <div className="min-h-full bg-gray-50 p-6">
+      <div className="mx-auto max-w-4xl">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-xl font-semibold text-gray-800">
+            Create Rate Plan
+          </h1>
 
-        <div>
-          <button type="button" onClick={() => setShowRoomTypes(true)}>
-            {selectedRoomTypes.length > 0 ? (
-              <div>
-                {selectedRoomTypes.map((selectedRoomType) => (
-                  <div>
-                    <p>
-                      {selectedRoomType.roomType.name} -{" "}
-                      {selectedRoomType.pricePerNight}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              "Enter room Type"
-            )}
-          </button>
+          <p className="mt-1 text-sm text-gray-500">
+            Create a rate plan and assign pricing to available room types.
+          </p>
+        </div>
 
-          {showRoomTypes && (
+        {/* Room Type Error */}
+        {isError && (
+          <div className="mb-5 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+            {(roomTypeError as any)?.response?.data?.error ||
+              "Unable to load room types."}
+          </div>
+        )}
+
+        <form
+          onSubmit={createRatePlanHandler}
+          className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm"
+        >
+          {/* Basic Information */}
+          <div className="border-b border-gray-200 px-6 py-4">
+            <h2 className="text-sm font-semibold text-gray-800">
+              Basic Information
+            </h2>
+
+            <p className="mt-1 text-xs text-gray-500">
+              Enter the basic information for this rate plan.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 p-6 md:grid-cols-2">
+            {/* Code */}
             <div>
-              <div>
-                {fetchedRoomTypes.map((roomT: RoomType) => {
-                  const isSelectedRoom = selectedRoomTypes.some(
-                    (r) => r.roomType._id === roomT._id,
-                  );
-                  const selectedRoom = selectedRoomTypes.find(
-                    (r) => r.roomType._id === roomT._id,
-                  );
-                  return (
-                    <div key={roomT._id}>
-                      <button
-                        type="button"
-                        onClick={() => toggleRoomTypeSelect(roomT)}
-                      >
-                        <span>{isSelectedRoom ? "Tick" : "Not Tick"}</span>
-                        <div>
-                          <p>
-                            {roomT.code} - {roomT.name}
-                          </p>
-                          <p>{roomT.bedType}</p>
-                          <p>{roomT.maxOccupancy}</p>
-                          <p>{JSON.stringify(roomT.features)}</p>
-                        </div>
-                      </button>
+              <label
+                htmlFor="code"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Rate Plan Code
+              </label>
 
-                      {selectedRoom && (
-                        <input
-                          type="number"
-                          required
-                          placeholder="Enter Price per Night"
-                          value={selectedRoom?.pricePerNight}
-                          onChange={(e) =>
-                            onChangePriceInputHandler(
-                              selectedRoom.roomType._id,
-                              Number(e.target.value),
-                            )
-                          }
-                        />
-                      )}
+              <input
+                type="text"
+                id="code"
+                name="code"
+                placeholder="e.g. INKPCM"
+                value={formData.code}
+                onChange={onChangeInputHandler}
+                required
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm uppercase outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
+
+              <p className="mt-1 text-xs text-gray-400">
+                A short unique code for this rate plan.
+              </p>
+            </div>
+
+            {/* Name */}
+            <div>
+              <label
+                htmlFor="name"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Rate Plan Name
+              </label>
+
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="e.g. Corporate King Rate"
+                value={formData.name}
+                onChange={onChangeInputHandler}
+                required
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Description */}
+            <div className="md:col-span-2">
+              <label
+                htmlFor="description"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Description
+              </label>
+
+              <textarea
+                id="description"
+                name="description"
+                placeholder="Describe this rate plan..."
+                value={formData.description}
+                onChange={onChangeInputHandler}
+                rows={3}
+                required
+                className="w-full resize-none rounded-md border border-gray-300 px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Start Date */}
+            <div>
+              <label
+                htmlFor="startDate"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                Start Date
+              </label>
+
+              <input
+                type="date"
+                id="startDate"
+                name="startDate"
+                value={formData.startDate}
+                onChange={onChangeInputHandler}
+                required
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* End Date */}
+            <div>
+              <label
+                htmlFor="endDate"
+                className="mb-1.5 block text-sm font-medium text-gray-700"
+              >
+                End Date
+              </label>
+
+              <input
+                type="date"
+                id="endDate"
+                name="endDate"
+                value={formData.endDate}
+                onChange={onChangeInputHandler}
+                required
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          {/* Room Types Header */}
+          <div className="border-y border-gray-200 px-6 py-4">
+            <h2 className="text-sm font-semibold text-gray-800">
+              Room Type Pricing
+            </h2>
+
+            <p className="mt-1 text-xs text-gray-500">
+              Select the room types included in this rate plan and define their
+              nightly prices.
+            </p>
+          </div>
+
+          {/* Room Type Selection */}
+          <div className="p-6">
+            <button
+              type="button"
+              onClick={() => setShowRoomTypes(true)}
+              className="min-h-12 w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-left transition hover:border-blue-400 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {selectedRoomTypes.length > 0 ? (
+                <div className="space-y-2">
+                  <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+                    Selected Room Types
+                  </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    {selectedRoomTypes.map((selectedRoomType) => (
+                      <span
+                        key={selectedRoomType.roomType._id}
+                        className="rounded-md bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700"
+                      >
+                        {selectedRoomType.roomType.name} — ₹
+                        {selectedRoomType.pricePerNight}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-sm font-medium text-gray-700">
+                    Select Room Types
+                  </p>
+
+                  <p className="mt-0.5 text-xs text-gray-400">
+                    Click here to select rooms and add pricing.
+                  </p>
+                </div>
+              )}
+            </button>
+
+            {/* Room Type Modal */}
+            {showRoomTypes && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+                <div className="flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg bg-white shadow-xl">
+                  {/* Modal Header */}
+                  <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+                    <div>
+                      <h3 className="text-base font-semibold text-gray-800">
+                        Select Room Types
+                      </h3>
+
+                      <p className="mt-1 text-xs text-gray-500">
+                        Select rooms and enter their price per night.
+                      </p>
                     </div>
-                  );
-                })}
+
+                    <button
+                      type="button"
+                      onClick={() => setShowRoomTypes(false)}
+                      className="rounded-md px-2 py-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {/* Room Type List */}
+                  <div className="flex-1 space-y-3 overflow-y-auto p-6">
+                    {fetchedRoomTypes.map((roomT: RoomType) => {
+                      const isSelectedRoom = selectedRoomTypes.some(
+                        (r) => r.roomType._id === roomT._id,
+                      );
+
+                      const selectedRoom = selectedRoomTypes.find(
+                        (r) => r.roomType._id === roomT._id,
+                      );
+
+                      return (
+                        <div
+                          key={roomT._id}
+                          className={`rounded-lg border p-4 transition ${
+                            isSelectedRoom
+                              ? "border-blue-400 bg-blue-50/50"
+                              : "border-gray-200 bg-white hover:border-gray-300"
+                          }`}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => toggleRoomTypeSelect(roomT)}
+                            className="flex w-full items-start gap-3 text-left"
+                          >
+                            {/* Selection Indicator */}
+                            <span
+                              className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border text-xs font-bold ${
+                                isSelectedRoom
+                                  ? "border-blue-600 bg-blue-600 text-white"
+                                  : "border-gray-300 bg-white text-transparent"
+                              }`}
+                            >
+                              ✓
+                            </span>
+
+                            {/* Room Information */}
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center justify-between gap-3">
+                                <p className="text-sm font-semibold text-gray-800">
+                                  {roomT.code} — {roomT.name}
+                                </p>
+
+                                <span className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-500">
+                                  {roomT.bedType}
+                                </span>
+                              </div>
+
+                              <p className="mt-1 text-xs text-gray-500">
+                                Max occupancy: {roomT.maxOccupancy}
+                              </p>
+
+                              <p className="mt-1 text-xs text-gray-400">
+                                {roomT.features.join(", ")}
+                              </p>
+                            </div>
+                          </button>
+
+                          {/* Price Input */}
+                          {selectedRoom && (
+                            <div className="mt-4 border-t border-gray-200 pt-4">
+                              <label
+                                htmlFor={`price-${roomT._id}`}
+                                className="mb-1.5 block text-xs font-medium text-gray-700"
+                              >
+                                Price Per Night
+                              </label>
+
+                              <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+                                  ₹
+                                </span>
+
+                                <input
+                                  id={`price-${roomT._id}`}
+                                  type="number"
+                                  min="1"
+                                  required
+                                  placeholder="Enter price per night"
+                                  value={selectedRoom.pricePerNight}
+                                  onChange={(e) =>
+                                    onChangePriceInputHandler(
+                                      selectedRoom.roomType._id,
+                                      Number(e.target.value),
+                                    )
+                                  }
+                                  className="w-full rounded-md border border-gray-300 py-2 pl-8 pr-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+
+                    {fetchedRoomTypes.length === 0 && (
+                      <div className="rounded-md border border-dashed border-gray-300 p-8 text-center">
+                        <p className="text-sm text-gray-500">
+                          No room types found.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Modal Footer */}
+                  <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+                    <button
+                      type="button"
+                      onClick={() => setShowRoomTypes(false)}
+                      className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowRoomTypes(false)}
+                      className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                    >
+                      Done
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div>
-                <button type="button" onClick={() => setShowRoomTypes(false)}>
-                  Cancel
-                </button>
-                <button type="button" onClick={() => setShowRoomTypes(false)}>
-                  Done
-                </button>
-              </div>
+            )}
+          </div>
+
+          {/* Create Error */}
+          {isRatePlanCreateError && (
+            <div className="mx-6 mb-5 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+              {(ratePlanError as any)?.response?.data?.error ||
+                "Unable to create rate plan."}
             </div>
           )}
-        </div>
-        <div>
-          {isRatePlanCreateError && (
-            <p>{(ratePlanError as any).response.data.error}</p>
-          )}
-        </div>
-        <button type="button" onClick={() => navigate("/rate-plans")}>
-          Cancel
-        </button>
-        <button type="submit">
-          {createRatePlanPending ? "Creating..." : "Create"}
-        </button>
-      </form>
+
+          {/* Actions */}
+          <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+            <button
+              type="button"
+              onClick={() => navigate("/rate-plans")}
+              className="rounded-md border border-gray-300 bg-white px-5 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              disabled={createRatePlanPending}
+              className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {createRatePlanPending ? "Creating..." : "Create Rate Plan"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

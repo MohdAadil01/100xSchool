@@ -22,6 +22,7 @@ import RoomType from "./pages/rooms/RoomType";
 import RoomCreate from "./pages/rooms/RoomCreate";
 import RatePlanCreate from "./pages/rateplan/RatePlanCreate";
 import RatePlan from "./pages/rateplan/RatePlan";
+import ComingSoon from "./pages/comingsoon/ComingSoon";
 
 let router = createBrowserRouter([
   {
@@ -102,6 +103,10 @@ let router = createBrowserRouter([
           {
             path: "/rate-plans",
             element: <RatePlan />,
+          },
+          {
+            path: "*",
+            element: <ComingSoon />,
           },
         ],
       },

@@ -1,8 +1,9 @@
 import { Outlet, useLocation } from "react-router-dom";
-import Navbar from "../../components/Navbar";
 import { useAuth } from "../../context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../api/axios";
+import Sidebar from "../../components/Sidebar";
+import Topbar from "../../components/Topbar";
 
 function Layout() {
   const { user, activePropertyId, setActivePropertyId } = useAuth();
@@ -44,8 +45,17 @@ function Layout() {
 
   return (
     <>
-      <Navbar />
-      <Outlet />
+      <div className="flex h-screen overflow-hidden bg-gray-100">
+        <Sidebar />
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          <Topbar />
+
+          <main className="min-h-0 flex-1 overflow-y-auto">
+            <Outlet />
+          </main>
+        </div>
+      </div>
     </>
   );
 }

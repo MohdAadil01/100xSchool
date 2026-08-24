@@ -41,6 +41,7 @@ function RatePlanCreate() {
   const [selectedRoomTypes, setSelectedRoomTypes] = useState<
     SelectedRoomType[]
   >([]);
+  const [validationError, setValidationError] = useState("");
 
   const { user, activePropertyId } = useAuth();
 
@@ -93,8 +94,7 @@ function RatePlanCreate() {
       return response.data.data;
     },
 
-    onSuccess: (data) => {
-      console.log("Rate Plan created.");
+    onSuccess: () => {
       navigate("/rate-plans");
     },
 
@@ -139,15 +139,20 @@ function RatePlanCreate() {
   const createRatePlanHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setValidationError("");
+
     if (!propertyId) return;
-
-    if (selectedRoomTypes.length === 0) return;
-
-    const invalidPrice = selectedRoomTypes.some(
-      (room) => room.pricePerNight <= 0,
-    );
-
-    if (invalidPrice) return;
+    if (selectedRoomTypes.length === 0) {
+      setValidationError("Please select at least one room type");
+      return;
+    }
+    const invalidPrice = selectedRoomTypes.some((r) => r.pricePerNight <= 0);
+    if (invalidPrice) {
+      setValidationError(
+        "Please enter a valid price for all selected room types",
+      );
+      return;
+    }
 
     createRatePlan();
   };
@@ -512,6 +517,12 @@ function RatePlanCreate() {
             <div className="mx-6 mb-5 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
               {(ratePlanError as any)?.response?.data?.error ||
                 "Unable to create rate plan."}
+            </div>
+          )}
+
+          {validationError && (
+            <div className="mx-6 mb-4 text-sm text-red-600">
+              {validationError}
             </div>
           )}
 

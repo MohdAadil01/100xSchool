@@ -166,14 +166,48 @@ function Sidebar() {
         {/* Super Admin */}
 
         {user?.role === "superadmin" && (
+          <>
+            <div className="mb-6">
+              <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                Operations
+              </p>
+              <nav className="space-y-1">
+                {renderNavItem(dashboardItem)}
+                {frontDeskItems.map(renderNavItem)}
+                {adminItems
+                  .filter((i) => i.label === "Rooms")
+                  .map(renderNavItem)}
+              </nav>
+            </div>
+            <div className="mb-6">
+              <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                Management
+              </p>
+              <nav className="space-y-1">
+                {adminItems
+                  .filter((i) => i.label !== "Rooms")
+                  .map(renderNavItem)}
+              </nav>
+            </div>
+            <div className="mb-6">
+              <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                Administration
+              </p>
+              <nav className="space-y-1">
+                {superAdminItems.map(renderNavItem)}
+              </nav>
+            </div>
+          </>
+        )}
+
+        {user?.role === "housekeeping" && (
           <div className="mb-6">
             <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
-              Administration
+              Housekeeping
             </p>
-
             <nav className="space-y-1">
               {renderNavItem(dashboardItem)}
-              {superAdminItems.map(renderNavItem)}
+              {renderNavItem({ label: "Rooms", path: "/rooms", icon: "▤" })}
             </nav>
           </div>
         )}

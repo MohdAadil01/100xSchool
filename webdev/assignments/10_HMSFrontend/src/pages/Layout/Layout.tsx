@@ -45,13 +45,11 @@ function Layout() {
 
   return (
     <>
-      <div className="flex h-screen overflow-hidden bg-gray-100">
+      <div className="flex h-screen overflow-hidden">
         <Sidebar />
-
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex flex-1 flex-col overflow-hidden">
           <Topbar />
-
-          <main className="min-h-0 flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto bg-gray-50">
             <Outlet />
           </main>
         </div>

@@ -38,14 +38,13 @@ function Topbar() {
           className="flex items-center gap-3 rounded-md px-2 py-1.5 hover:bg-gray-50"
         >
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
-            {`${user?.firstName?.charAt(0).toUpperCase()}  ${user?.lastName?.charAt(0).toUpperCase()}` ||
-              "U"}
+            {user?.firstName?.charAt(0)}
+            {user?.lastName?.charAt(0)}
           </div>
 
           <div className="hidden text-left sm:block">
             <p className="text-sm font-medium text-gray-800">
-              {`${user?.firstName?.charAt(0).toUpperCase()}  ${user?.lastName?.charAt(0).toUpperCase()}` ||
-                "User"}
+              {user?.firstName} {user?.lastName}
             </p>
 
             <p className="text-xs capitalize text-gray-400">{user?.role}</p>

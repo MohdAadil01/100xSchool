@@ -49,6 +49,8 @@ function NewReservation() {
   const propertyId =
     user?.role === "superadmin" ? activePropertyId : user?.propertyId;
 
+  console.log(propertyId);
+  console.log(user);
   const [checkIn, setCheckin] = useState(formatDate(today));
   const [checkOut, setCheckout] = useState(formatDate(defaultCheckOut));
   const [adults, setAdults] = useState(1);

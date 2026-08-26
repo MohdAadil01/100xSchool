@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useState } from "react";
 
@@ -64,6 +64,12 @@ export const Login = () => {
             {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
+        <p className="text-sm text-center text-gray-500 mt-4">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-600 hover:underline">
+            Register
+          </Link>
+        </p>
       </div>
     </div>
   );

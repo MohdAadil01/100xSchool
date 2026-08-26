@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export interface RegisterUser {
   firstName: string;
@@ -173,6 +173,12 @@ export const Register = () => {
             {isLoading ? "Registering..." : "Register"}
           </button>
         </form>
+        <p className="text-sm text-center text-gray-500 mt-4">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );

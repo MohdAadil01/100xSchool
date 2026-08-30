@@ -2,6 +2,9 @@ import mongoose, { Document } from "mongoose";
 
 interface IAppointment extends Document {
   slot: mongoose.Types.ObjectId;
+  patient: mongoose.Types.ObjectId;
+  doctor: mongoose.Types.ObjectId;
+  hospital: mongoose.Types.ObjectId;
   status: "scheduled" | "completed" | "cancelled" | "noshow";
   reason: string;
   symptoms: string[];
@@ -15,6 +18,21 @@ const appointmentSchema = new mongoose.Schema<IAppointment>(
     slot: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "AppointmentSlot",
+      required: true,
+    },
+    patient: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    doctor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    hospital: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Hospital",
       required: true,
     },
     status: {
@@ -47,4 +65,7 @@ const appointmentSchema = new mongoose.Schema<IAppointment>(
   },
 );
 
-export const Appointment = mongoose.model("Appointment", appointmentSchema);
+export const Appointment = mongoose.model<IAppointment>(
+  "Appointment",
+  appointmentSchema,
+);

@@ -9,7 +9,7 @@ interface IPayment extends Document {
   razorpayOrderId: string;
   razorpayPaymentId: string;
   razorpaySignature: string;
-  paidAt: string;
+  paidAt: Date;
 }
 
 const paymentSchema = new mongoose.Schema<IPayment>(
@@ -17,10 +17,12 @@ const paymentSchema = new mongoose.Schema<IPayment>(
     appointment: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Appointment",
+      required: true,
     },
     patient: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Patient",
+      required: true,
     },
     amount: {
       type: Number,
@@ -39,20 +41,15 @@ const paymentSchema = new mongoose.Schema<IPayment>(
     },
     razorpayOrderId: {
       type: String,
-      required: true,
     },
     razorpayPaymentId: {
       type: String,
-      required: true,
     },
     razorpaySignature: {
       type: String,
-      required: true,
     },
     paidAt: {
-      type: String,
-      required: true,
-      timestamps: true,
+      type: Date,
     },
   },
   {

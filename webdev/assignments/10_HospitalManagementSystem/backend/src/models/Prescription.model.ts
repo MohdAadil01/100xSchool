@@ -11,44 +11,52 @@ interface IPrescription extends Document {
   appointment: mongoose.Types.ObjectId;
   doctor: mongoose.Types.ObjectId;
   patient: mongoose.Types.ObjectId;
-  medicines: IMedicine;
+  medicines: IMedicine[];
   diagnosis: string;
   notes?: string;
-  followUpDate?: string;
+  followUpDate?: Date;
 }
 
-const prescriptionSchema = new mongoose.Schema<IPrescription>({
-  appointment: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Appointment",
-  },
-  patient: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Patient",
-  },
-  doctor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Doctor",
-  },
-  medicines: [
-    {
-      name: String,
-      dosage: String,
-      frequency: String,
-      duration: String,
-      instructions: String,
+const prescriptionSchema = new mongoose.Schema<IPrescription>(
+  {
+    appointment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Appointment",
+      required: true,
     },
-  ],
-  diagnosis: {
-    type: String,
+    patient: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Patient",
+      required: true,
+    },
+    doctor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Doctor",
+      required: true,
+    },
+    medicines: [
+      {
+        name: String,
+        dosage: String,
+        frequency: String,
+        duration: String,
+        instructions: String,
+      },
+    ],
+    diagnosis: {
+      type: String,
+    },
+    notes: {
+      type: String,
+    },
+    followUpDate: {
+      type: Date,
+    },
   },
-  notes: {
-    type: String,
+  {
+    timestamps: true,
   },
-  followUpDate: {
-    type: String,
-  },
-});
+);
 
 export const Prescription = mongoose.model<IPrescription>(
   "Prescription",

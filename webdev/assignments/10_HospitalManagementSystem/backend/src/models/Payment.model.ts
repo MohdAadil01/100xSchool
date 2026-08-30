@@ -57,4 +57,11 @@ const paymentSchema = new mongoose.Schema<IPayment>(
   },
 );
 
+paymentSchema.index(
+  {
+    appointment: 1,
+  },
+  { unique: true },
+);
+
 export const Payment = mongoose.model<IPayment>("Payment", paymentSchema);

@@ -51,6 +51,17 @@ const appointmentSlotSchema = new mongoose.Schema<IAppointmentSlot>(
   },
 );
 
+appointmentSlotSchema.index({
+  doctor: 1,
+  date: 1,
+});
+
+appointmentSlotSchema.index({
+  doctor: 1,
+  date: 1,
+  status: 1,
+});
+
 export const AppointmentSlot = mongoose.model<IAppointmentSlot>(
   "AppointmentSlot",
   appointmentSlotSchema,

@@ -32,7 +32,7 @@ const doctorSchema = new mongoose.Schema<IDoctor>(
       type: Number,
       required: true,
       default: 1,
-      min: 1,
+      min: 0,
     },
     consultationFee: {
       type: Number,

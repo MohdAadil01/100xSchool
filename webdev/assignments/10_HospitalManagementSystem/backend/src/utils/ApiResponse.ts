@@ -4,7 +4,7 @@ export class ApiResponse<T> {
   data?: T | null;
   error?: string | null;
 
-  constructor(
+  private constructor(
     statusCode: number,
     message: string,
     data: T | null,

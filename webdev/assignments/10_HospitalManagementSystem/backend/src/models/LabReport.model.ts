@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 
-interface ILabReport {
+interface ILabReport extends Document {
   patient: mongoose.Types.ObjectId;
   doctor: mongoose.Types.ObjectId;
   appointment: mongoose.Types.ObjectId;
@@ -53,17 +53,14 @@ const labReportSchema = new mongoose.Schema<ILabReport>(
 
     fileUrl: {
       type: String,
-      required: true,
     },
 
     fileName: {
       type: String,
-      required: true,
     },
 
     fileSize: {
       type: Number,
-      required: true,
     },
 
     uploadedBy: {

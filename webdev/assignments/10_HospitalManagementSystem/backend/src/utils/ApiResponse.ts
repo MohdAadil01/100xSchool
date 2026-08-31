@@ -16,7 +16,7 @@ export class ApiResponse<T> {
     if (error) this.error = error;
   }
 
-  static success<T>(statusCode: number, data: T, message: string) {
+  static ok<T>(statusCode: number, data: T, message: string) {
     return new ApiResponse(statusCode, message, data, null);
   }
 

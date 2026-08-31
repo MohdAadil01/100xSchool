@@ -50,7 +50,10 @@ const registerPatient = async (input: PatientInputType) => {
 
   const { password: _, ...safeUser } = user.toObject();
 
-  const token = jwt.sign({ id: user._id, email }, ENV.JWT_SECRET!);
+  const token = jwt.sign(
+    { id: user._id, email, role: "patient" },
+    ENV.JWT_SECRET!,
+  );
 
   return {
     user: safeUser,
@@ -116,7 +119,7 @@ const registerStaff = async (input: StaffInputType) => {
     });
   }
 
-  const token = jwt.sign({ id: user._id, email }, ENV.JWT_SECRET!);
+  const token = jwt.sign({ id: user._id, email, role }, ENV.JWT_SECRET!);
 
   const { password: _, ...safeUser } = user.toObject();
 
@@ -135,7 +138,10 @@ const login = async (input: LoginInputType) => {
 
   if (!isAuthenticated) throw new AppError(409, "Wrong credentials");
 
-  const token = jwt.sign({ id: user._id, email }, ENV.JWT_SECRET!);
+  const token = jwt.sign(
+    { id: user._id, email, role: user.role },
+    ENV.JWT_SECRET!,
+  );
 
   const { password: _, ...safeUser } = user.toObject();
   return {
@@ -144,11 +150,12 @@ const login = async (input: LoginInputType) => {
   };
 };
 
-const me = async (email: string) => {
-  const user = await User.findOne({ email });
+const me = async (id: string) => {
+  const user = await User.findById(id);
   if (!user) throw new AppError(404, "User not found.");
 
-  return user;
+  const { password: _, ...safeUser } = user.toObject();
+  return safeUser;
 };
 
 export const authService = {

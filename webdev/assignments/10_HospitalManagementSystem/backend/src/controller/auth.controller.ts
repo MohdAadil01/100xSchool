@@ -58,8 +58,8 @@ const login = AsyncHandler(async (req: Request, res: Response) => {
 });
 
 const me = AsyncHandler(async (req: Request, res: Response) => {
-  const email = req.user?.email;
-  const user = await authService.me(email!);
+  const id = req.user?.id;
+  const user = await authService.me(id!);
 
   return res.status(200).json(ApiResponse.ok(200, user, "Success"));
 });

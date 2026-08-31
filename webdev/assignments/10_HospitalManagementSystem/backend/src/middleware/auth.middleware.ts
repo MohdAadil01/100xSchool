@@ -8,22 +8,24 @@ export const authMiddleware = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const accessToken = req.cookies.accessToken;
-  if (!accessToken) throw new AppError(401, "Not authenticated");
-
   try {
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) throw new AppError(401, "Not authenticated");
+
     const decodedData = jwt.verify(accessToken, ENV.JWT_SECRET!) as {
       id: string;
+      role: string;
       email: string;
     };
 
-    const { id, email } = decodedData;
+    const { id, email, role } = decodedData;
     req.user = {
       id,
+      role,
       email,
     };
     next();
   } catch (error) {
-    throw new AppError(401, "Invalid or expired token");
+    next(error);
   }
 };

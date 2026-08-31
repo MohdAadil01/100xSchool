@@ -10,3 +10,5 @@ authRouter.post("/staff/register", authController.registerStaff);
 authRouter.post("/login", authController.login);
 
 authRouter.post("/logout", authController.logout);
+
+authRouter.get("/me", authController.me);

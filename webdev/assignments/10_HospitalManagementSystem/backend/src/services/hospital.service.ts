@@ -36,8 +36,14 @@ const update = async (hospitalId: string, input: UpdateHospitalInputType) => {
   return updatedHospital.toObject();
 };
 
-const getAll = async (query?: { city?: string }) => {
-  const hospitals = await Hospital.find(query ? query : {});
+const getAll = async (query?: { name?: string; city?: string }) => {
+  const hospitals = await Hospital.find({
+    $or: [
+      { city: query?.city },
+      { name: query?.name },
+      { city: query?.city, name: query?.name },
+    ],
+  });
 
   return hospitals;
 };

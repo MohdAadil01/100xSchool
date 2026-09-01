@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const hospitalInputSchema = z.object({
+export const createHospitalInputSchema = z.object({
   name: z.string().min(3, "Hospital name should be atleast 3 characters long."),
   address: z
     .string()
@@ -30,6 +30,6 @@ export const updateHospitalSchema = z.object({
     .optional(),
 });
 
-export type HospitalInputType = z.infer<typeof hospitalInputSchema>;
+export type CreateHospitalInputType = z.infer<typeof createHospitalInputSchema>;
 
-export type UpdateHospitalType = z.infer<typeof updateHospitalSchema>;
+export type UpdateHospitalInputType = z.infer<typeof updateHospitalSchema>;

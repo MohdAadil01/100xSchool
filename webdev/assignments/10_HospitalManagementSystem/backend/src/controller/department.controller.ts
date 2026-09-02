@@ -27,13 +27,15 @@ const update = AsyncHandler(async (req: Request, res: Response) => {
 
   return res
     .status(200)
-    .json(ApiResponse.ok(201, response, "Updated Department."));
+    .json(ApiResponse.ok(200, response, "Updated Department."));
 });
 
 const getAll = AsyncHandler(async (req: Request, res: Response) => {
-  const { name } = req.body;
+  const { name } = req.query;
   const { hospitalId } = req.params;
-  const response = await departmentService.getAll(String(hospitalId), { name });
+  const response = await departmentService.getAll(String(hospitalId), {
+    name: name as string,
+  });
 
   return res.status(200).json(ApiResponse.ok(200, response, "Get all"));
 });

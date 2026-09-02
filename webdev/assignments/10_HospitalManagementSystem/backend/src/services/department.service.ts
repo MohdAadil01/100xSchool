@@ -13,7 +13,7 @@ const create = async (input: CreateDepartmentInputType) => {
 
   const departmentExists = await Department.findOne({ name, hospital });
   if (departmentExists)
-    throw new AppError(400, "Department already exists in this Hospital.");
+    throw new AppError(409, "Department already exists in this Hospital.");
 
   const department = await Department.create({
     name,
@@ -30,10 +30,10 @@ const getAll = async (hospital: string, query?: { name?: string }) => {
   const hospitalExists = await Hospital.findById(hospital);
   if (!hospitalExists) throw new AppError(404, "Hospital not found.");
 
-  const departments = await Department.find({
-    hospital,
-    name: { $regex: `^${query?.name}`, $options: "i" },
-  });
+  let filter: any = { hospital };
+  if (query?.name) filter.name = { $regex: query.name, $options: "i" };
+
+  const departments = await Department.find(filter);
 
   return departments;
 };
@@ -60,7 +60,8 @@ const update = async (
       _id: departmentId,
       hospital,
     },
-    { name, description },
+    { $set: { name, description } },
+    { new: true },
   );
   if (!department) throw new AppError(404, "Department not found.");
 

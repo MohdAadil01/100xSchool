@@ -13,7 +13,7 @@ const create = async (input: CreateHospitalInputType) => {
   });
   if (hospitalExists)
     throw new AppError(
-      400,
+      409,
       "Same Hospital already exists please use unique details",
     );
 
@@ -29,7 +29,13 @@ const update = async (hospitalId: string, input: UpdateHospitalInputType) => {
   if (city) query["city"] = city;
   if (phone) query["phone"] = phone;
 
-  const updatedHospital = await Hospital.findByIdAndUpdate(hospitalId, query);
+  const updatedHospital = await Hospital.findByIdAndUpdate(
+    hospitalId,
+    { $set: query },
+    {
+      new: true,
+    },
+  );
 
   if (!updatedHospital) throw new AppError(404, "Hospital doesn't exists.");
 
@@ -37,13 +43,10 @@ const update = async (hospitalId: string, input: UpdateHospitalInputType) => {
 };
 
 const getAll = async (query?: { name?: string; city?: string }) => {
-  const hospitals = await Hospital.find({
-    $or: [
-      { city: query?.city },
-      { name: query?.name },
-      { city: query?.city, name: query?.name },
-    ],
-  });
+  const filter: any = {};
+  if (query?.name) filter.name = { $regex: query.name, $options: "i" };
+  if (query?.city) filter.city = { $regext: query.city, $options: "i" };
+  const hospitals = await Hospital.find(filter);
 
   return hospitals;
 };

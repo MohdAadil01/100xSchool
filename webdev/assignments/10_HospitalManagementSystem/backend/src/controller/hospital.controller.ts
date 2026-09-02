@@ -18,7 +18,7 @@ const create = AsyncHandler(async (req: Request, res: Response) => {
 
 const update = AsyncHandler(async (req: Request, res: Response) => {
   const { hospitalId } = req.params;
-  const parsedBody = await updateHospitalSchema.parse(req.body);
+  const parsedBody = updateHospitalSchema.parse(req.body);
   const response = await hospitalService.update(String(hospitalId), parsedBody);
 
   return res
@@ -27,8 +27,11 @@ const update = AsyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAll = AsyncHandler(async (req: Request, res: Response) => {
-  const { name, city } = req.body;
-  const response = await hospitalService.getAll({ city });
+  const { name, city } = req.query;
+  const response = await hospitalService.getAll({
+    name: name as string,
+    city: city as string,
+  });
 
   return res.status(200).json(ApiResponse.ok(200, response, "Get all"));
 });

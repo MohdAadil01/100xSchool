@@ -3,7 +3,7 @@ import { AppError } from "../utils/AppError";
 
 export const roleMiddleware = (...inputRole: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const role = req.user?.role;
+    let role = req.user?.role;
     if (!role) throw new AppError(404, "Not authorzed");
 
     if (!inputRole.includes(role))

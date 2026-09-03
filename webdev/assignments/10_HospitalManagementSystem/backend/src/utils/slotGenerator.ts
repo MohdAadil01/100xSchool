@@ -36,7 +36,7 @@ export const generateSlots = async (input: SlotGeneratorInput) => {
   const endTimeInMin = timeIntoMinutes(endTime);
   const slots = [];
 
-  for (let day = 1; day <= 30; day++) {
+  for (let day = 1; day <= daysAhead; day++) {
     const date = new Date();
     date.setDate(date.getDate() + day);
     const dayNumber = date.getDay() as DayNumber;

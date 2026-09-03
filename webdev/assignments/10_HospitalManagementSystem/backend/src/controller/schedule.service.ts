@@ -10,49 +10,36 @@ const create = async (input: CreateDoctorScheduleInputType) => {
 
   const existingSchedule = await DoctorSchedule.findOne({
     doctor,
-    $or: [{ startTime: { $lte: endTime } }],
+    hospital,
+    isActive: true,
   });
 
   if (existingSchedule)
-    throw new AppError(409, "Doctor has already created dotor scheduled");
-
-  const session = await mongoose.startSession();
+    throw new AppError(409, "Doctor already has an active schedule");
 
   const dId = new mongoose.Types.ObjectId(doctor);
   const hId = new mongoose.Types.ObjectId(hospital);
-  try {
-    return session.withTransaction(async () => {
-      const schedule = await DoctorSchedule.create(
-        [
-          {
-            doctor: dId,
-            hospital: hId,
-            workingDays,
-            startTime,
-            endTime,
-            slotDuration,
-          },
-        ],
-        { session },
-      );
 
-      slotGenerationQueue.add("generateSlot", {
-        doctor,
-        hospital,
-        workingDays,
-        startTime,
-        endTime,
-        slotDuration,
-        daysAhead: 1,
-      });
-      return schedule;
-    });
-  } catch (error) {
-    console.log("Error in generating schedule " + error);
-    return;
-  } finally {
-    session.endSession();
-  }
+  const schedule = await DoctorSchedule.create({
+    doctor: dId,
+    hospital: hId,
+    workingDays,
+    startTime,
+    endTime,
+    slotDuration,
+  });
+
+  await slotGenerationQueue.add("generateSlot", {
+    doctor,
+    hospital,
+    workingDays,
+    startTime,
+    endTime,
+    slotDuration,
+    daysAhead: 30,
+  });
+
+  return schedule;
 };
 
 export const scheduleService = {

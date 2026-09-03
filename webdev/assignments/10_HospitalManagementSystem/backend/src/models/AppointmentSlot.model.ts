@@ -6,7 +6,7 @@ interface IAppointmentSlot extends Document {
   date: Date;
   startTime: string;
   endTime: string;
-  status: "available" | "booked" | "cancelled";
+  status: "available" | "booked" | "cancelled" | "not-available";
   appointment?: mongoose.Types.ObjectId;
 }
 
@@ -38,7 +38,7 @@ const appointmentSlotSchema = new mongoose.Schema<IAppointmentSlot>(
       type: String,
       enum: ["available", "booked", "cancelled"],
       required: true,
-      default: "available",
+      default: "not-available",
     },
     appointment: {
       type: mongoose.Schema.Types.ObjectId,

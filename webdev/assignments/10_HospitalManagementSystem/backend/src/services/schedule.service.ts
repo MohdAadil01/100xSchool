@@ -42,6 +42,14 @@ const create = async (input: CreateDoctorScheduleInputType) => {
   return schedule;
 };
 
+const getSchedules = async (doctor: string) => {
+  if (!doctor) throw new AppError(404, "Doctor id not found");
+
+  const schedules = await DoctorSchedule.find({ doctor, isActive: true });
+
+  return schedules;
+};
 export const scheduleService = {
   create,
+  getSchedules,
 };

@@ -1,5 +1,5 @@
 import { Worker } from "bullmq";
-import { worker } from "node:cluster";
+
 import { generateSlots } from "../utils/slotGenerator";
 import { redisConnection } from "../config/redis";
 import { sendMail } from "../utils/sendEmail";

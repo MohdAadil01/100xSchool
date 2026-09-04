@@ -3,7 +3,7 @@ import { authMiddleware } from "../middleware/auth.middleware";
 import { roleMiddleware } from "../middleware/role.middleware";
 import { scheduleController } from "../controller/schedule.controller";
 
-const scheduleRoute = Router();
+export const scheduleRoute = Router();
 
 scheduleRoute.post(
   "/",
